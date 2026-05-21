@@ -1,0 +1,5 @@
+# Ignore compiled binaries
+bin/*
+
+# Keep the bin directory
+!bin/.gitkeep

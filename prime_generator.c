@@ -1,7 +1,7 @@
 /**
  * The program accepts highest value from user
  * and generates prime numbers from 2 to upto the provided number
- * Execute by -> gcc prime_generator.c -o prime_generator && ./prime_generator
+ * Execute by -> gcc prime_generator.c -o bin/prime_generator && ./bin/prime_generator
  */
 #include <stdio.h> // for printf, scanf, getchar functions
 #include <stdlib.h> // for system function
@@ -21,7 +21,7 @@ int main() {
 	system("clear"); // for clearing terminal in Linux/macOS
 
 	// parsing from PRIME_NUM_FROM to user's given number and calculating prime numbers
-	for(int current_number=PRIME_NUM_FROM;current_number<=prime_num_upto;current_number++) {
+	for (int current_number=PRIME_NUM_FROM;current_number<=prime_num_upto;current_number++) {
 		if (is_prime_num(current_number)) {
 			primes[total_prime] = current_number;
 			total_prime = total_prime + 1;
@@ -56,9 +56,7 @@ int accept_prime_num_upto(const char *prompt) {
 		}
 
 		// checking if the value meets the range condition
-		if (value <= 1) {
-			printf("***Error - Please print value greater or equal than 2***\n");
-		}
+		if (value <= 1) printf("***Error - Please print value greater or equal than 2***\n");
 	} while (value < 2);
 
 	return value;
@@ -79,10 +77,8 @@ int is_prime_num (int current_number) {
  * Function to parse through given array of primes and print all the items
  */
 void print_primes(int primes[], int total_prime) {
-    for(int i=0;i<total_prime;i++) {
+    for (int i=0;i<total_prime;i++) {
         printf("%d\t", primes[i]);
-        if ((i+1)%20==0) { // to jump on next line after 20 tab included entries in single line
-            printf("\n");
-        }
+        if ((i+1)%20==0) printf("\n"); // to jump on next line after 20 tab included entries in single line
     }
 }
