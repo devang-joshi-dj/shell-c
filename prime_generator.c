@@ -1,4 +1,4 @@
-/*
+/**
  * The program accepts highest value from user
  * and generates prime numbers from 2 to upto the provided number
  * Execute by -> gcc prime_generator.c -o prime_generator && ./prime_generator
