@@ -5,6 +5,7 @@
  */
 #include <stdio.h> // for printf, scanf, getchar functions
 #include <stdlib.h> // for system function
+#include <time.h> // for clock function, CLOCKS_PER_SEC
 
 int main();
 int accept_prime_num_upto(const char *prompt);
@@ -12,9 +13,16 @@ int is_prime_num (int current_number);
 void print_primes(int primes[], int total_prime);
 
 int main() {
+    clock_t start, end; // special data type to store time values
+    double time_taken;
+
+    // taking user input for maximum number upto which program will run to find prime values
+	long int prime_num_upto = accept_prime_num_upto("Please enter the highest number upto which you want to find prime numbers");
+
+	start = clock(); // storing time value after taking user input
+
 	const int PRIME_NUM_FROM = 2;
 	int total_prime = 0;
-	long int prime_num_upto = accept_prime_num_upto("Please enter the highest number upto which you want to find prime numbers");
 	int prime_arr_size = prime_num_upto/4+1;
 	int primes[prime_arr_size] = {};
 
@@ -31,9 +39,13 @@ int main() {
 	// prints all generated prime numbers
 	print_primes(primes, total_prime);
 
+	end = clock(); // storing time value after program execution
+	time_taken = ((double)(end-start)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
+
 	// prints total prime numbers and the range being calculated from
 	printf("\nTotal Prime Numbers found - %d\n", total_prime);
 	printf("From %d to %ld\n", PRIME_NUM_FROM, prime_num_upto);
+	printf("Execution time: %f seconds \n", time_taken);
 
 	return 0;
 }

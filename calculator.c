@@ -13,7 +13,7 @@
  * Divide by zero handling
  * Even/Odd, Prime Number, Palindrome detector of result
  * History of every calculation is recorded and can be cleared
- * Exit with exit message of calculations done in the exited session of the program
+ * Exit with exit message of active session time, calculations done in the exited session of the program
  * Execute by -> gcc calculator.c -o bin/calculator && ./bin/calculator
  */
 #include <stdio.h> // for printf, scanf, getchar functions
