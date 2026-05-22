@@ -1,11 +1,18 @@
 /**
  * The program accepts highest value from user
  * and generates prime numbers from 2 to upto the provided number
+ * Logic for efficiency to check a number for bieng a prime number
+ *  - Divide the number with all the numbers equal to and smaller than itself upto 1 and only 2 divisions should be possible
+ *  - Numbers ending in 0, 2, 4, 6, or 8 are even and never prime (except 2).
+ *  - Numbers ending in 5 are divisible by 5 and never prime (except 5).
+ *  - If the sum of the digits is divisible by 3, the number is not prime.
+ *  - Divide the number by all prime numbers (e.g., 7, 11, 13) that are less than sqrt of number.
+ *  - If none of these divisions result in a whole number, the number is prime.
  * Execute by -> gcc prime_generator.c -o bin/prime_generator && ./bin/prime_generator
  */
 #include <stdio.h> // for printf, scanf, getchar functions
-#include <stdlib.h> // for system function
 #include <time.h> // for clock function, CLOCKS_PER_SEC
+#include <stdlib.h> // for system function
 
 int main();
 int accept_prime_num_upto(const char *prompt);
@@ -28,8 +35,14 @@ int main() {
 
 	system("clear"); // for clearing terminal in Linux/macOS
 
-	// parsing from PRIME_NUM_FROM to user's given number and calculating prime numbers
-	for (int current_number=PRIME_NUM_FROM;current_number<=prime_num_upto;current_number++) {
+	// pushing first prime number starting from
+	if (is_prime_num(PRIME_NUM_FROM)) {
+    	primes[total_prime] = PRIME_NUM_FROM;
+    	total_prime = total_prime + 1;
+	}
+
+	// parsing even numbers from (PRIME_NUM_FROM+1) to user's given number and calculating prime numbers
+	for (int current_number=PRIME_NUM_FROM+1;current_number<=prime_num_upto;current_number += 2) {
 		if (is_prime_num(current_number)) {
 			primes[total_prime] = current_number;
 			total_prime = total_prime + 1;
@@ -43,7 +56,7 @@ int main() {
 	time_taken = ((double)(end-start)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
 
 	// prints total prime numbers and the range being calculated from
-	printf("\nTotal Prime Numbers found - %d\n", total_prime);
+	printf("\nTotal Prime Numbers found: %d\n", total_prime);
 	printf("From %d to %ld\n", PRIME_NUM_FROM, prime_num_upto);
 	printf("Execution time: %f seconds \n", time_taken);
 
