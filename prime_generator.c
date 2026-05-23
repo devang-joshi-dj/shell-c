@@ -64,8 +64,8 @@ int main() {
 	total_time_taken = ((double)(end_total-start_calc)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
 
 	// prints calculation time and total run time of the program
-	printf("Calculation Time: %f seconds \n", calc_time_taken);
-	printf("Total Time: %f seconds \n", total_time_taken);
+	printf("Calculation Time:\t%f seconds \n", calc_time_taken);
+	printf("Total Time:\t%f seconds \n", total_time_taken);
 
 	return 0;
 }
@@ -99,15 +99,14 @@ int accept_prime_num_upto(char *prompt) {
  */
 int is_prime_num (int current_number, int primes[], int total_prime) {
     int flag = 1;
-    int unit_digit = getUnitDigit(current_number);
+    int unit_digit = current_number%10;
 
     // checking if unit digit is 5 (except number 5) or sum of digits is divisible by 3 but not 3
     if (
         (unit_digit == 5 && current_number != 5) ||
-        (getIntDigitSum(current_number)%3 == 0 && current_number != 3)
-    ) {
-        flag = 0;
-    } else {
+        (current_number % 3 == 0 && current_number != 3)
+    ) flag = 0;
+    else {
         // checking if the number is divisible by all the prime numbers less than its own square root
         int current_num_root = sqrt(current_number);
         for (int i = 0; i < total_prime; i++) {
@@ -122,28 +121,6 @@ int is_prime_num (int current_number, int primes[], int total_prime) {
         }
     }
     return flag;
-}
-
-/**
- * Function to get sum of all the digits of given number
- */
-int getIntDigitSum(int num) {
-    int sum = 0;
-
-    do {
-        int unit_digit = getUnitDigit(num);
-        sum += unit_digit;
-        num /= 10;
-    } while (num > 0);
-
-    return sum;
-}
-
-/**
- * Function to return unit digit of given number
- */
-int getUnitDigit(int num) {
-    return num%10;
 }
 
 /**
