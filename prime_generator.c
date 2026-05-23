@@ -21,16 +21,16 @@ int accept_prime_num_upto(char *prompt);
 int is_prime_num (int current_number, int primes[], int total_prime);
 int getIntDigitSum(int num);
 int getUnitDigit(int num);
-void print_primes(int primes[], int total_prime);
+void print_primes(int primes[], int total_prime, int first_prime, long int last_prime);
 
 int main() {
-    clock_t start, end; // special data type to store time values
-    double time_taken;
+    clock_t start_calc, end_calc, end_total; // special data type to store time values
+    double calc_time_taken, total_time_taken;
 
     // taking user input for maximum number upto which program will run to find prime values
 	long int prime_num_upto = accept_prime_num_upto("Please enter the highest number upto which you want to find prime numbers");
 
-	start = clock(); // storing time value after taking user input
+	start_calc = clock(); // storing time value after taking user input
 
 	const int PRIME_NUM_FROM = 2;
 	int total_prime = 0;
@@ -52,18 +52,20 @@ int main() {
 		}
 	}
 
+	end_calc = clock(); // storing time value after program calculation
+
 	system("clear"); // for clearing terminal in Linux/macOS
 
-	// prints all generated prime numbers
-	print_primes(primes, total_prime);
+	print_primes(primes, total_prime, PRIME_NUM_FROM, prime_num_upto); // prints all generated prime numbers
 
-	end = clock(); // storing time value after program execution
-	time_taken = ((double)(end-start)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
+	end_total = clock(); // storing time value after program execution
 
-	// prints total prime numbers and the range being calculated from
-	printf("\nTotal Prime Numbers found: %d\n", total_prime);
-	printf("From %d to %ld\n", PRIME_NUM_FROM, prime_num_upto);
-	printf("Execution time: %f seconds \n", time_taken);
+	calc_time_taken = ((double)(end_calc-start_calc)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
+	total_time_taken = ((double)(end_total-start_calc)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
+
+	// prints calculation time and total run time of the program
+	printf("Calculation Time: %f seconds \n", calc_time_taken);
+	printf("Total Time: %f seconds \n", total_time_taken);
 
 	return 0;
 }
@@ -147,9 +149,14 @@ int getUnitDigit(int num) {
 /**
  * Function to parse through given array of primes and print all the items
  */
-void print_primes(int primes[], int total_prime) {
+void print_primes(int primes[], int total_prime, int first_prime, long int last_prime) {
     for (int i=0;i<total_prime;i++) {
         printf("%d\t", primes[i]);
         if ((i+1)%15==0) printf("\n"); // to jump on next line after 15 tab included entries in single line
     }
+
+    // prints total prime numbers and the range being calculated from
+	printf("\nTotal Prime Numbers found: %d\n", total_prime);
+	printf("From %d to %ld\n", first_prime, last_prime);
+	printf("------------------------------------------\n");
 }
