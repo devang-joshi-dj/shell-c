@@ -63,7 +63,7 @@ int show_operations_menu() {
 		"Exit"
 	};
 
-	for (int i=0;i<MENU_ITEMS;i++) {
+	for (int i = 0; i < MENU_ITEMS; i++) {
 	    if (!i) printf("%s\n", menu[0]);
 	    printf("%d. %s\n", i, menu[i]);
 	}

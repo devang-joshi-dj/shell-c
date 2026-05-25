@@ -34,7 +34,7 @@ int main() {
 
 	const int PRIME_NUM_FROM = 2;
 	int total_prime = 0;
-	int prime_arr_size = prime_num_upto/4+1;
+	int prime_arr_size = (prime_num_upto / 4) + 1;
 	int primes[prime_arr_size] = {};
 
 	printf("%s", "Calculating...");
@@ -45,7 +45,7 @@ int main() {
    	total_prime += 1;
 
 	// parsing even numbers from (PRIME_NUM_FROM+1) to user's given number and calculating prime numbers
-	for (int current_number=PRIME_NUM_FROM+1;current_number<=prime_num_upto;current_number += 2) {
+	for (int current_number = PRIME_NUM_FROM+1; current_number <= prime_num_upto; current_number += 2) {
 		if (is_prime_num(current_number, primes, total_prime)) {
 			primes[total_prime] = current_number;
 			total_prime = total_prime + 1;
@@ -60,8 +60,8 @@ int main() {
 
 	end_total = clock(); // storing time value after program execution
 
-	calc_time_taken = ((double)(end_calc-start_calc)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
-	total_time_taken = ((double)(end_total-start_calc)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
+	calc_time_taken = ((double)(end_calc - start_calc)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
+	total_time_taken = ((double)(end_total - start_calc)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
 
 	// prints calculation time and total run time of the program
 	printf("Calculation Time:\t%f seconds \n", calc_time_taken);
@@ -99,7 +99,7 @@ int accept_prime_num_upto(char *prompt) {
  */
 int is_prime_num (int current_number, int primes[], int total_prime) {
     int flag = 1;
-    int unit_digit = current_number%10;
+    int unit_digit = current_number % 10;
 
     // checking if unit digit is 5 (except number 5) or sum of digits is divisible by 3 but not 3
     if (
@@ -127,9 +127,9 @@ int is_prime_num (int current_number, int primes[], int total_prime) {
  * Function to parse through given array of primes and print all the items
  */
 void print_primes(int primes[], int total_prime, int first_prime, long int last_prime) {
-    for (int i=0;i<total_prime;i++) {
+    for (int i = 0; i < total_prime; i++) {
         printf("%d\t", primes[i]);
-        if ((i+1)%15==0) printf("\n"); // to jump on next line after 15 tab included entries in single line
+        if ((i + 1) % 15 == 0) printf("\n"); // to jump on next line after 15 tab included entries in single line
     }
 
     // prints total prime numbers and the range being calculated from
