@@ -25,7 +25,12 @@ void get_binary_value(long unsigned int num, char *buffer, size_t size);
 int get_digit_count(unsigned long int num);
 int get_int_digit_sum(unsigned long int num);
 
-void drawLine(int width);
+void draw_top_title_line(int width);
+void draw_bottom_title_line(int width);
+void draw_bottom_header_line(int width);
+void draw_top_line(int width);
+void draw_bottom_line(int width);
+
 void draw_title(char *title, int width);
 void draw_header(char *header, int width);
 void draw_open_box_str(char *label, char *value, int width);
@@ -153,13 +158,53 @@ int get_int_digit_sum(unsigned long int num) {
 }
 
 /**
- * Function to draw line with symbols for the given width
+ * Function to draw top line for title with symbols for the given width
  */
-void drawLine(int width) {
+void draw_top_title_line(int width) {
     int actual_width = width-2;
-    printf("+"); // taking up 1 width
-    for (int i = 0; i < actual_width; i++) printf("-"); // taking up 2 less than width
-    printf("+\n"); // taking up 1 width
+    printf("╔"); // taking up 1 width
+    for (int i = 0; i < actual_width; i++) printf("═"); // taking up 2 less than width
+    printf("╗\n"); // taking up 1 width
+}
+
+/**
+ * Function to draw bottom line for title with symbols for the given width
+ */
+void draw_bottom_title_line(int width) {
+    int actual_width = width-2;
+    printf("╚"); // taking up 1 width
+    for (int i = 0; i < actual_width; i++) printf("═"); // taking up 2 less than width
+    printf("╝\n"); // taking up 1 width
+}
+
+/**
+ * Function to draw bottom line for header with symbols for the given width
+ */
+void draw_bottom_header_line(int width) {
+    int actual_width = width-2;
+    printf("├"); // taking up 1 width
+    for (int i = 0; i < actual_width; i++) printf("─"); // taking up 2 less than width
+    printf("┤\n"); // taking up 1 width
+}
+
+/**
+ * Function to draw top line with symbols for the given width
+ */
+void draw_top_line(int width) {
+    int actual_width = width-2;
+    printf("┌"); // taking up 1 width
+    for (int i = 0; i < actual_width; i++) printf("─"); // taking up 2 less than width
+    printf("┐\n"); // taking up 1 width
+}
+
+/**
+ * Function to draw bottom line with symbols for the given width
+ */
+void draw_bottom_line(int width) {
+    int actual_width = width-2;
+    printf("└"); // taking up 1 width
+    for (int i = 0; i < actual_width; i++) printf("─"); // taking up 2 less than width
+    printf("┘\n"); // taking up 1 width
 }
 
 /**
@@ -169,13 +214,13 @@ void draw_title(char *title, int width) {
     int total_empty_space = width - strlen(title) - 2;
     int one_side_spacing = total_empty_space / 2;
     int other_side_spacing = total_empty_space - one_side_spacing;
-    drawLine(width);
-    printf("|"); // taking up 1 width
+    draw_top_title_line(width);
+    printf("║"); // taking up 1 width
     for (int i = 0; i < one_side_spacing; i++) printf(" ");
     printf("%s", title);
     for (int i = 0; i < other_side_spacing; i++) printf(" ");
-    printf("|\n"); // taking up 1 width
-    drawLine(width);
+    printf("║\n"); // taking up 1 width
+    draw_bottom_title_line(width);
     printf("\n");
 }
 
@@ -184,12 +229,12 @@ void draw_title(char *title, int width) {
  */
 void draw_header(char *header, int width) {
     int right_side_spacing = width - 3 - strlen(header);
-    drawLine(width);
-    printf("| "); // taking up 1 width
+    draw_top_line(width);
+    printf("│ "); // taking up 1 width
     printf("%s", header);
     for (int i = 0; i < right_side_spacing; i++) printf(" ");
-    printf("|\n"); // taking up 1 width
-    drawLine(width);
+    printf("│\n"); // taking up 1 width
+    draw_bottom_header_line(width);
 }
 
 /**
@@ -197,10 +242,10 @@ void draw_header(char *header, int width) {
  */
 void draw_open_box_str(char *label, char *value, int width) {
     int right_side_spacing = width - 3 - strlen(label) - strlen(value);
-    printf("| "); // taking up 1 width
+    printf("│ "); // taking up 1 width
     printf("%s%s", label, value);
     for (int i = 0; i < right_side_spacing; i++) printf(" ");
-    printf("|\n"); // taking up 1 width
+    printf("│\n"); // taking up 1 width
 }
 
 /**
@@ -208,17 +253,17 @@ void draw_open_box_str(char *label, char *value, int width) {
  */
 void draw_open_box_int(char *label, unsigned long int value, int width) {
     int right_side_spacing = width - 3 - strlen(label) - intlen(value);
-    printf("| "); // taking up 1 width
+    printf("│ "); // taking up 1 width
     printf("%s%lu", label, value);
     for (int i = 0; i < right_side_spacing; i++) printf(" ");
-    printf("|\n"); // taking up 1 width
+    printf("│\n"); // taking up 1 width
 }
 
 /**
  * Function to draw an a line to close the box
  */
 void draw_box_bottom(int width) {
-    drawLine(width);
+    draw_bottom_line(width);
     printf("\n");
 }
 
