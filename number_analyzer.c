@@ -22,6 +22,7 @@
 int main();
 unsigned long int accept_number(char *prompt);
 void get_binary_value(long unsigned int num, char *buffer, size_t size);
+void get_visual_binary(char *buffer);
 int get_digit_count(unsigned long int num);
 int get_int_digit_sum(unsigned long int num);
 
@@ -48,12 +49,19 @@ int main() {
     get_binary_value(number, binary, sizeof(binary));
 
     draw_title("NUMBER ANALYZER", FORMAT_WIDTH);
+
     draw_header("INPUT DETAILS", FORMAT_WIDTH);
     draw_open_box_int("Entered Number:         ", number, FORMAT_WIDTH);
     draw_open_box_str("Binary Representation:  ", binary, FORMAT_WIDTH);
     draw_open_box_int("Digit Count:            ", get_digit_count(number), FORMAT_WIDTH);
     draw_open_box_int("Digit Sum:              ", get_int_digit_sum(number), FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
+
+    draw_header("BINARY VISUALISATION", FORMAT_WIDTH);
+    draw_open_box_str("Binary:                 ", binary, FORMAT_WIDTH);
+    draw_open_box_str("Visual:                 ", get_visual_binary(binary), FORMAT_WIDTH);
+    draw_box_bottom(FORMAT_WIDTH);
+
     draw_title("ANALYSIS COMPLETED SUCCESSFULLY", FORMAT_WIDTH);
 
     return 0;
@@ -126,6 +134,10 @@ void get_binary_value(long unsigned int num, char *buffer, size_t size) {
             buffer[binarylen-i-1] = temp;
         }
     }
+}
+
+void get_visual_binary(char *buffer) {
+    // █ ░
 }
 
 /**
