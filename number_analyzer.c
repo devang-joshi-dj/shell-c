@@ -14,7 +14,7 @@
  *  - Magic number score
  * Execute by -> gcc number_analyzer.c -o bin/number_analyzer && ./bin/number_analyzer
  */
-#include <stddef.h>
+#include <stddef.h> // for size_t
 #include <stdio.h> // for printf, scanf, getchar functions
 #include <stdlib.h> // for system, abs functions
 #include <string.h> // for strlen type
@@ -22,7 +22,7 @@
 int main();
 unsigned long int accept_number(char *prompt);
 void get_binary_value(long unsigned int num, char *buffer, size_t size);
-void get_visual_binary(char *buffer);
+void get_visual_binary(char *binary, char *buffer);
 int get_digit_count(unsigned long int num);
 int get_int_digit_sum(unsigned long int num);
 
@@ -34,19 +34,24 @@ void draw_bottom_line(int width);
 
 void draw_title(char *title, int width);
 void draw_header(char *header, int width);
+void draw_error(char *header, int width);
 void draw_open_box_str(char *label, char *value, int width);
 void draw_open_box_int(char *label, unsigned long int value, int width);
 void draw_box_bottom(int width);
 int intlen(unsigned long int num);
 
+#define FORMAT_WIDTH 60
+
 int main() {
-    const int FORMAT_WIDTH = 60;
+    const int BINARY_LEN = 33;
     unsigned long int number = accept_number("Reveal thy number for analysis");
 
     system("clear"); // for clearing terminal in Linux/macOS
 
-    char binary[33] = ""; // upto 4294967295
+    char binary[BINARY_LEN]; // upto 4294967295
+    char visual_binary[BINARY_LEN];
     get_binary_value(number, binary, sizeof(binary));
+    get_visual_binary(binary, visual_binary);
 
     draw_title("NUMBER ANALYZER", FORMAT_WIDTH);
 
@@ -59,7 +64,7 @@ int main() {
 
     draw_header("BINARY VISUALISATION", FORMAT_WIDTH);
     draw_open_box_str("Binary:                 ", binary, FORMAT_WIDTH);
-    draw_open_box_str("Visual:                 ", get_visual_binary(binary), FORMAT_WIDTH);
+    draw_open_box_str("Visual:                 ", visual_binary, FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
     draw_title("ANALYSIS COMPLETED SUCCESSFULLY", FORMAT_WIDTH);
@@ -81,17 +86,17 @@ unsigned long int accept_number(char *prompt) {
 
 		// checking if the input is valid integer
 		if (scanf("%ld", &value) != 1) {
-			printf("***Error - Please input a valid number***\n");
+			draw_error("ERROR: Please provide a valid number", FORMAT_WIDTH);
 			while (getchar() != '\n'); // clearing the buffer
 			is_value_allowed = 0; // resetting the value to repeat
 		}
 
-		if (value < 0) {
-		    printf("***Error - Please input a positive number***\n");
-    		is_value_allowed = 0; // resetting the value to repeat
-		}
 		if (value > MAX_VAL) {
-		    printf("***Error - Please input a positive number***\n");
+		    char error_msg[FORMAT_WIDTH];
+    		// formatting MAX_VAL into error message
+			snprintf(error_msg, FORMAT_WIDTH, "ERROR: Please provide a positive number less than %ld", MAX_VAL);
+
+		    draw_error(error_msg, FORMAT_WIDTH);
     		is_value_allowed = 0; // resetting the value to repeat
 		}
 	} while (!is_value_allowed);
@@ -107,7 +112,6 @@ unsigned long int accept_number(char *prompt) {
  */
 void get_binary_value(long unsigned int num, char *buffer, size_t size) {
     int write_index = 0;
-    size_t binarylen;
 
     if (size == 0) return;
     if (num == 0) {
@@ -125,19 +129,22 @@ void get_binary_value(long unsigned int num, char *buffer, size_t size) {
         }
         buffer[write_index] = '\0'; // null terminator
 
-        binarylen = write_index;
-
-        for (int i = 0; i < (binarylen / 2); i++) { // reversing string to form correct binary code
+        // write_index has become now the length of buffer
+        // reversing string to form correct binary code
+        for (int i = 0; i < (write_index / 2); i++) {
             char temp;
             temp = buffer[i];
-            buffer[i] = buffer[binarylen-i-1];
-            buffer[binarylen-i-1] = temp;
+            buffer[i] = buffer[write_index-i-1];
+            buffer[write_index-i-1] = temp;
         }
     }
 }
 
-void get_visual_binary(char *buffer) {
-    // █ ░
+void get_visual_binary(char *binary, char *buffer) {
+    for (size_t i = 0; binary[i] != '\0'; i++) {
+        // strcat(buffer, binary[i] == '1' ? "█" : "░");
+        buffer[i] = binary[i] == '1' ? '|' : '-';
+    }
 }
 
 /**
@@ -247,6 +254,19 @@ void draw_header(char *header, int width) {
     for (int i = 0; i < right_side_spacing; i++) printf(" ");
     printf("│\n"); // taking up 1 width
     draw_bottom_header_line(width);
+}
+
+/**
+ * Function to draw a box with left aligned given error for the given width of the box
+ */
+void draw_error(char *header, int width) {
+    int right_side_spacing = width - 3 - strlen(header);
+    draw_top_line(width);
+    printf("│ "); // taking up 1 width
+    printf("%s", header);
+    for (int i = 0; i < right_side_spacing; i++) printf(" ");
+    printf("│\n"); // taking up 1 width
+    draw_box_bottom(width);
 }
 
 /**
