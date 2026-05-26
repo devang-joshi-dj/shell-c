@@ -143,6 +143,7 @@ void get_binary_value(long unsigned int num, char *buffer, size_t size) {
 void get_visual_binary(char *binary, char *buffer) {
     for (size_t i = 0; binary[i] != '\0'; i++) {
         // strcat(buffer, binary[i] == '1' ? "█" : "░");
+        // buffer[i] = binary[i] == '1' ? '#' : '_';
         buffer[i] = binary[i] == '1' ? '|' : '-';
     }
 }

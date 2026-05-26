@@ -81,14 +81,14 @@ int accept_prime_num_upto(char *prompt) {
 
 		// checking if the input is valid integer
 		if (scanf("%d", &value) != 1) {
-			printf("***Error - Please input a valid number***\n");
+			printf("> ERROR: Please input a valid number\n");
 			while (getchar() != '\n'); // clearing the buffer
 			value = 0; // resetting the value to repeat
 			continue;
 		}
 
 		// checking if the value meets the range condition
-		if (value <= 1) printf("***Error - Please print value greater or equal than 2***\n");
+		if (value <= 1) printf("> ERROR: Please print value greater or equal than 2\n");
 	} while (value < 2);
 
 	return value;
