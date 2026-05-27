@@ -12,9 +12,9 @@
  * Execute by -> gcc prime_generator.c -o bin/prime_generator -lm && ./bin/prime_generator
  */
 #include <stdio.h> // for printf, scanf, getchar functions
-#include <math.h> // for sqrt function
-#include <time.h> // for clock function, CLOCKS_PER_SEC
 #include <stdlib.h> // for system function
+#include <time.h> // for clock function, CLOCKS_PER_SEC
+#include <math.h> // for sqrt function
 
 int main();
 int accept_prime_num_upto(char *prompt);

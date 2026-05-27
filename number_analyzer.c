@@ -1,5 +1,5 @@
 /**
- * The program provide mathematical, logical and binary details about a number inputted from user
+ * The program provides mathematical, logical and binary details about a number provided from user
  * Its provides the following
  *  - Palindrome detection
  *  - Binary representation
@@ -12,11 +12,12 @@
  *  - Prime number detection
  *  - Even/Odd detection
  *  - Magic number score
- * Execute by -> gcc number_analyzer.c -o bin/number_analyzer && ./bin/number_analyzer
+ * Execute by -> gcc number_analyzer.c -o bin/number_analyzer -lm && ./bin/number_analyzer
  */
 #include <stddef.h> // for size_t
 #include <stdio.h> // for printf, scanf, getchar functions
 #include <stdlib.h> // for system, abs functions
+#include <math.h> // for sqrt function
 #include <string.h> // for strlen type
 
 int main();
@@ -25,6 +26,7 @@ void get_binary_value(long unsigned int num, char *buffer, size_t size);
 void get_visual_binary(char *binary, char *buffer);
 int get_digit_count(unsigned long int num);
 int get_int_digit_sum(unsigned long int num);
+int is_prime_number(unsigned long int num);
 
 void draw_top_title_line(int width);
 void draw_bottom_title_line(int width);
@@ -60,6 +62,10 @@ int main() {
     draw_open_box_str("Binary Representation:  ", binary, FORMAT_WIDTH);
     draw_open_box_int("Digit Count:            ", get_digit_count(number), FORMAT_WIDTH);
     draw_open_box_int("Digit Sum:              ", get_int_digit_sum(number), FORMAT_WIDTH);
+    draw_box_bottom(FORMAT_WIDTH);
+
+    draw_header("MATHEMATICAL DETAILS", FORMAT_WIDTH);
+    draw_open_box_str("Prime Number:         ", is_prime_number(number) ? "YES" : "NO", FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
     draw_header("BINARY VISUALISATION", FORMAT_WIDTH);
@@ -175,6 +181,36 @@ int get_int_digit_sum(unsigned long int num) {
     }
 
     return abs(sum);
+}
+
+/**
+ * Function to to check if the given number is prime or not
+ */
+int is_prime_number(unsigned long int num) {
+    int flag = 1;
+    int unit_digit = num % 10;
+
+    // checking if num is divisible of 2 but not 2, is divisible by 3 but not 3 or unit digit is 5 (except number 5)
+    if (
+        (num % 2 == 0 && num != 2 ) ||
+        (unit_digit == 5 && num != 5) ||
+        (num % 3 == 0 && num != 3)
+    ) flag = 0;
+    else {
+        if (num < 2) flag = 0;
+        else {
+            // checking if the number is divisible by all the prime numbers less than its own square root
+            int num_root = sqrt(num);
+            for (int i = 3; i <= num_root; i += 2) {
+                if (!(num % i)) {
+                    flag = 0;
+                    break; // breaking the loop if confirmed that current_number is not prime
+                }
+            }
+        }
+    }
+
+    return flag;
 }
 
 /**
