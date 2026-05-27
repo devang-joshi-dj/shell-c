@@ -27,6 +27,7 @@ void get_visual_binary(char *binary, char *buffer);
 int get_digit_count(unsigned long int num);
 int get_int_digit_sum(unsigned long int num);
 int is_prime_number(unsigned long int num);
+int check_odd_even(unsigned long int num);
 
 void draw_top_title_line(int width);
 void draw_bottom_title_line(int width);
@@ -58,19 +59,20 @@ int main() {
     draw_title("NUMBER ANALYZER", FORMAT_WIDTH);
 
     draw_header("INPUT DETAILS", FORMAT_WIDTH);
-    draw_open_box_int("Entered Number:         ", number, FORMAT_WIDTH);
-    draw_open_box_str("Binary Representation:  ", binary, FORMAT_WIDTH);
-    draw_open_box_int("Digit Count:            ", get_digit_count(number), FORMAT_WIDTH);
-    draw_open_box_int("Digit Sum:              ", get_int_digit_sum(number), FORMAT_WIDTH);
+    draw_open_box_int("Entered Number        : ", number, FORMAT_WIDTH);
+    draw_open_box_str("Binary Representation : ", binary, FORMAT_WIDTH);
+    draw_open_box_int("Digit Count           : ", get_digit_count(number), FORMAT_WIDTH);
+    draw_open_box_int("Digit Sum             : ", get_int_digit_sum(number), FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
     draw_header("MATHEMATICAL DETAILS", FORMAT_WIDTH);
-    draw_open_box_str("Prime Number:         ", is_prime_number(number) ? "YES" : "NO", FORMAT_WIDTH);
+    draw_open_box_str("Prime Number          : ", is_prime_number(number) ? "YES" : "NO", FORMAT_WIDTH);
+    draw_open_box_str("Even / Odd            : ", check_odd_even(number) ? "EVEN" : "ODD", FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
     draw_header("BINARY VISUALISATION", FORMAT_WIDTH);
-    draw_open_box_str("Binary:                 ", binary, FORMAT_WIDTH);
-    draw_open_box_str("Visual:                 ", visual_binary, FORMAT_WIDTH);
+    draw_open_box_str("Binary                : ", binary, FORMAT_WIDTH);
+    draw_open_box_str("Visual                : ", visual_binary, FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
     draw_title("ANALYSIS COMPLETED SUCCESSFULLY", FORMAT_WIDTH);
@@ -211,6 +213,13 @@ int is_prime_number(unsigned long int num) {
     }
 
     return flag;
+}
+
+/**
+ * Function to to check if the given number is even or odd
+ */
+int check_odd_even(unsigned long int num) {
+    return num % 2 == 0;
 }
 
 /**
