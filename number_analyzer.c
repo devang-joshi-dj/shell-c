@@ -1,7 +1,7 @@
-/** TODO: Put necessary comments
+/** TODO:
  * The program provides mathematical, logical and binary details about a number provided from user
  * Its provides the following
- *  - Binary representation
+ *  - Binary notation
  *  - Digit counter
  *  - Digit sum calculation
  *  - Prime number detection
@@ -17,6 +17,7 @@
 #include <stddef.h> // for size_t
 #include <stdio.h> // for printf, scanf, getchar functions
 #include <stdlib.h> // for system, abs functions
+#include <time.h> // for clock function, CLOCKS_PER_SEC
 #include <math.h> // for sqrt function
 #include <string.h> // for strlen type
 
@@ -35,14 +36,15 @@ unsigned long int accept_number(const char *prompt);
 void get_binary_value(long unsigned int num, char *buffer, size_t size);
 void get_visual_binary(const char *binary, char *buffer);
 BinaryInfo get_binary_analysis(const char *binary);
+
 int get_digit_count(unsigned long int num);
 int get_digit_sum(unsigned long int num);
 int is_prime_number(unsigned long int num);
 int check_odd_even(const unsigned long int num);
 int is_palindrome(unsigned long int num);
 int is_armstrong_number(unsigned long int num, int digit_count);
+int is_perfect_number(const unsigned long int num);
 int is_harshad_number(const unsigned long int num, int digit_sum);
-
 int get_unit_digit(const unsigned long int num);
 
 void draw_top_title_line(const int width);
@@ -57,17 +59,22 @@ void draw_error(char *header, const int width);
 void draw_open_box_str(char *label, char *value, const int width);
 void draw_open_box_int(char *label, unsigned long int value, const int width);
 void draw_box_bottom(const int width);
-
 int intlen(unsigned long int num);
 
 int main() {
+    clock_t start_time, end_time; // declaring with special data type to store time values
+    double time_taken;
+
     const int BINARY_LEN = 33; // 1 bit reserved for null terminator
     int digit_count, digit_sum;
     char binary[BINARY_LEN]; // upto 4294967295
     char visual_binary[BINARY_LEN];
     BinaryInfo binary_info;
+    char end_title[FORMAT_WIDTH];
 
     unsigned long int number = accept_number("Reveal thy number for analysis");
+
+    start_time = clock(); // storing time value after taking user input
 
     system("clear"); // for clearing terminal in Linux/macOS
 
@@ -92,6 +99,7 @@ int main() {
     draw_open_box_str("Even / Odd            : ", check_odd_even(number) ? "EVEN" : "ODD", FORMAT_WIDTH);
     draw_open_box_str("Palindrome            : ", is_palindrome(number) ? "YES" : "NO", FORMAT_WIDTH);
     draw_open_box_str("Armstrong Number      : ", is_armstrong_number(number, digit_count) ? "YES" : "NO", FORMAT_WIDTH);
+    draw_open_box_str("Perfect Number        : ", is_perfect_number(number) ? "YES" : "NO", FORMAT_WIDTH);
     draw_open_box_str("Harshad Number        : ", is_harshad_number(number, digit_sum) ? "YES" : "NO", FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
@@ -104,7 +112,12 @@ int main() {
     draw_open_box_int("Zeros Count           : ", binary_info.zeros_count, FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
-    draw_title("ANALYSIS COMPLETED SUCCESSFULLY", FORMAT_WIDTH);
+    end_time = clock(); // storing time value after program execution
+	time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
+
+	snprintf(end_title, FORMAT_WIDTH, "ANALYSIS COMPLETED SUCCESSFULLY IN %lg SECONDS", time_taken);
+
+    draw_title(end_title, FORMAT_WIDTH);
 
     return 0;
 }
@@ -317,10 +330,25 @@ int is_armstrong_number(unsigned long int num, int digit_count) {
 }
 
 /**
+ * Function to check if the given number is a perfect number or not
+ */
+int is_perfect_number(const unsigned long int num) {
+    int sum = 0;
+
+    for (int i = 1; i < num; i++) {
+        if (num % i == 0) { // checking for proper divisors of the number
+            sum += i;
+        }
+    }
+
+    return num == sum;// returning number is equal to sum of all proper positive divisors of the number
+}
+
+/**
  * Function to check if the given number is a harshad number or not
  */
 int is_harshad_number(const unsigned long int num, int digit_sum) {
-    return !(num % digit_sum); // returning if number is evenly divisible by sum of its digits
+    return num % digit_sum == 0; // returning if number is evenly divisible by sum of its digits
 }
 
 /**

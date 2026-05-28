@@ -24,7 +24,7 @@ int getUnitDigit(int num);
 void print_primes(int primes[], int total_prime, int first_prime, long int last_prime);
 
 int main() {
-    clock_t start_calc, end_calc, end_total; // special data type to store time values
+    clock_t start_calc, end_calc, end_total; // declaring with special data type to store time values
     double calc_time_taken, total_time_taken;
 
     // taking user input for maximum number upto which program will run to find prime values
