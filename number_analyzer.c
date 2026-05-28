@@ -20,7 +20,7 @@
 #include <math.h> // for sqrt function
 #include <string.h> // for strlen type
 
-#define FORMAT_WIDTH 60
+#define FORMAT_WIDTH 64
 
 typedef struct {
     int is_binary_palindrome;
@@ -164,7 +164,7 @@ void get_binary_value(long unsigned int num, char *buffer, size_t size) {
             num /= 2;
             write_index++; // incrementing write_index
         }
-        buffer[write_index] = '\0'; // null terminator
+        buffer[write_index] = '\0'; // null terminator to end string
 
         // write_index has become now the length of buffer
         // reversing string to form correct binary code
@@ -188,6 +188,7 @@ void get_visual_binary(const char *binary, char *buffer) {
         // buffer[i] = binary[i] == '1' ? '#' : '_';
         buffer[i] = binary[i] == '1' ? '|' : '-';
     }
+    buffer[strlen(binary)] = '\0'; // null terminator to end string
 }
 
 /**
