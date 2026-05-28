@@ -7,9 +7,9 @@
  *  - Prime number detection
  *  - Even/Odd detection
  *  - Palindrome detection
- *  - Armstrong number detection
- *  - Perfect number detection
- *  - Harshad number detection
+ *  - Armstrong number detection - number is equal to sum of its digits raised to the power number of digits
+ *  - Perfect number detection - number is equal to sum of all proper positive divisors of the number
+ *  - Harshad number detection - number is evenly divisible by sum of its digits
  *  - Binary palindrome detection
  *  - Binary digit count (total, 1s, 0s)
  *  - Magic number score
@@ -37,28 +37,31 @@ void get_visual_binary(const char *binary, char *buffer);
 BinaryInfo get_binary_analysis(const char *binary);
 
 int get_digit_count(unsigned long int num);
-int get_int_digit_sum(unsigned long int num);
+int get_digit_sum(unsigned long int num);
 int is_prime_number(unsigned long int num);
-int check_odd_even(unsigned long int num);
+int check_odd_even(const unsigned long int num);
 int is_palindrome(unsigned long int num);
+int is_armstrong_number(unsigned long int num, int digit_count);
 
-void draw_top_title_line(int width);
-void draw_bottom_title_line(int width);
-void draw_bottom_header_line(int width);
-void draw_top_line(int width);
-void draw_bottom_line(int width);
+int get_unit_digit(unsigned long int num);
 
-void draw_title(char *title, int width);
-void draw_header(char *header, int width);
-void draw_error(char *header, int width);
-void draw_open_box_str(char *label, char *value, int width);
-void draw_open_box_int(char *label, unsigned long int value, int width);
-void draw_box_bottom(int width);
+void draw_top_title_line(const int width);
+void draw_bottom_title_line(const int width);
+void draw_bottom_header_line(const int width);
+void draw_top_line(const int width);
+void draw_bottom_line(const int width);
+
+void draw_title(char *title, const int width);
+void draw_header(char *header, const int width);
+void draw_error(char *header, const int width);
+void draw_open_box_str(char *label, char *value, const int width);
+void draw_open_box_int(char *label, unsigned long int value, const int width);
+void draw_box_bottom(const int width);
 int intlen(unsigned long int num);
 
 int main() {
     const int BINARY_LEN = 33; // 1 bit reserved for null terminator
-
+    int digit_count, digit_sum;
     char binary[BINARY_LEN]; // upto 4294967295
     char visual_binary[BINARY_LEN];
     BinaryInfo binary_info;
@@ -66,6 +69,9 @@ int main() {
     unsigned long int number = accept_number("Reveal thy number for analysis");
 
     system("clear"); // for clearing terminal in Linux/macOS
+
+    digit_count = get_digit_count(number);
+    digit_sum = get_digit_sum(number);
 
     get_binary_value(number, binary, sizeof(binary));
     get_visual_binary(binary, visual_binary);
@@ -75,15 +81,16 @@ int main() {
 
     draw_header("INPUT DETAILS", FORMAT_WIDTH);
     draw_open_box_int("Entered Number        : ", number, FORMAT_WIDTH);
-    draw_open_box_str("Binary Notation : ", binary, FORMAT_WIDTH);
-    draw_open_box_int("Digit Count           : ", get_digit_count(number), FORMAT_WIDTH);
-    draw_open_box_int("Digit Sum             : ", get_int_digit_sum(number), FORMAT_WIDTH);
+    draw_open_box_str("Binary Notation       : ", binary, FORMAT_WIDTH);
+    draw_open_box_int("Digit Count           : ", digit_count, FORMAT_WIDTH);
+    draw_open_box_int("Digit Sum             : ", digit_sum, FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
     draw_header("MATHEMATICAL ANALYSIS", FORMAT_WIDTH);
     draw_open_box_str("Prime Number          : ", is_prime_number(number) ? "YES" : "NO", FORMAT_WIDTH);
     draw_open_box_str("Even / Odd            : ", check_odd_even(number) ? "EVEN" : "ODD", FORMAT_WIDTH);
     draw_open_box_str("Palindrome            : ", is_palindrome(number) ? "YES" : "NO", FORMAT_WIDTH);
+    draw_open_box_str("Armstrong Number      : ", is_armstrong_number(number, digit_count) ? "YES" : "NO", FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
     draw_header("BINARY ANALYSIS", FORMAT_WIDTH);
@@ -224,11 +231,11 @@ int get_digit_count(unsigned long int num) {
 /**
  * Function to get sum of all the digits of the given number
  */
-int get_int_digit_sum(unsigned long int num) {
+int get_digit_sum(unsigned long int num) {
     int sum = 0;
 
     while (num != 0) {
-        int unit_digit = num % 10;
+        int unit_digit = get_unit_digit(num);
         sum += unit_digit;
         num /= 10;
     }
@@ -241,7 +248,7 @@ int get_int_digit_sum(unsigned long int num) {
  */
 int is_prime_number(unsigned long int num) {
     int flag = 1;
-    int unit_digit = num % 10;
+    int unit_digit = get_unit_digit(num);
 
     // checking if num is divisible of 2 but not 2, is divisible by 3 but not 3 or unit digit is 5 except number 5
     if (
@@ -269,7 +276,7 @@ int is_prime_number(unsigned long int num) {
 /**
  * Function to check if the given number is even or odd
  */
-int check_odd_even(unsigned long int num) {
+int check_odd_even(const unsigned long int num) {
     return num % 2 == 0;
 }
 
@@ -277,11 +284,11 @@ int check_odd_even(unsigned long int num) {
  * Function to check if the given number is a palindrome or not
  */
 int is_palindrome(unsigned long int num) {
-    unsigned long int original_num = num;
+    const unsigned long int original_num = num;
     unsigned long int reverse_num = 0;
 
     while (num != 0) { // reversing the number through loop
-        int unit_digit = num % 10;
+        int unit_digit = get_unit_digit(num);
         reverse_num = (reverse_num * 10) + unit_digit;
         num /= 10;
     }
@@ -290,9 +297,32 @@ int is_palindrome(unsigned long int num) {
 }
 
 /**
+ * Function to check if the given number is an armstrong number or not
+ */
+int is_armstrong_number(unsigned long int num, int digit_count) {
+    const unsigned long int original_num = num;
+    int sum = 0;
+
+    while (num != 0) { // reversing the number through loop
+        int unit_digit = get_unit_digit(num);
+        sum += pow(unit_digit, digit_count);
+        num /= 10;
+    }
+
+    return original_num == sum;
+}
+
+/**
+ * Function to return unit digit of given number
+ */
+int get_unit_digit(unsigned long int num) {
+    return num % 10;
+}
+
+/**
  * Function to draw top line for title with symbols for the given width
  */
-void draw_top_title_line(int width) {
+void draw_top_title_line(const int width) {
     int actual_width = width-2;
     printf("╔"); // taking up 1 width
     for (int i = 0; i < actual_width; i++) printf("═"); // taking up 2 less than width
@@ -302,7 +332,7 @@ void draw_top_title_line(int width) {
 /**
  * Function to draw bottom line for title with symbols for the given width
  */
-void draw_bottom_title_line(int width) {
+void draw_bottom_title_line(const int width) {
     int actual_width = width-2;
     printf("╚"); // taking up 1 width
     for (int i = 0; i < actual_width; i++) printf("═"); // taking up 2 less than width
@@ -312,7 +342,7 @@ void draw_bottom_title_line(int width) {
 /**
  * Function to draw bottom line for header with symbols for the given width
  */
-void draw_bottom_header_line(int width) {
+void draw_bottom_header_line(const int width) {
     int actual_width = width-2;
     printf("├"); // taking up 1 width
     for (int i = 0; i < actual_width; i++) printf("─"); // taking up 2 less than width
@@ -322,7 +352,7 @@ void draw_bottom_header_line(int width) {
 /**
  * Function to draw top line with symbols for the given width
  */
-void draw_top_line(int width) {
+void draw_top_line(const int width) {
     int actual_width = width-2;
     printf("┌"); // taking up 1 width
     for (int i = 0; i < actual_width; i++) printf("─"); // taking up 2 less than width
@@ -332,7 +362,7 @@ void draw_top_line(int width) {
 /**
  * Function to draw bottom line with symbols for the given width
  */
-void draw_bottom_line(int width) {
+void draw_bottom_line(const int width) {
     int actual_width = width-2;
     printf("└"); // taking up 1 width
     for (int i = 0; i < actual_width; i++) printf("─"); // taking up 2 less than width
@@ -342,7 +372,7 @@ void draw_bottom_line(int width) {
 /**
  * Function to draw a box with center aligned given title for the given width of the box
  */
-void draw_title(char *title, int width) {
+void draw_title(char *title, const int width) {
     int total_empty_space = width - strlen(title) - 2;
     int one_side_spacing = total_empty_space / 2;
     int other_side_spacing = total_empty_space - one_side_spacing;
@@ -359,7 +389,7 @@ void draw_title(char *title, int width) {
 /**
  * Function to draw a box with left aligned given header for the given width of the box
  */
-void draw_header(char *header, int width) {
+void draw_header(char *header, const int width) {
     int right_side_spacing = width - 3 - strlen(header);
     draw_top_line(width);
     printf("│ "); // taking up 1 width
@@ -372,7 +402,7 @@ void draw_header(char *header, int width) {
 /**
  * Function to draw a box with left aligned given error for the given width of the box
  */
-void draw_error(char *header, int width) {
+void draw_error(char *header, const int width) {
     int right_side_spacing = width - 3 - strlen(header);
     draw_top_line(width);
     printf("│ "); // taking up 1 width
@@ -385,7 +415,7 @@ void draw_error(char *header, int width) {
 /**
  * Function to draw an open box with no up or bottom lines to show given label and string value for the given width of the box
  */
-void draw_open_box_str(char *label, char *value, int width) {
+void draw_open_box_str(char *label, char *value, const int width) {
     int right_side_spacing = width - 3 - strlen(label) - strlen(value);
     printf("│ "); // taking up 1 width
     printf("%s%s", label, value);
@@ -396,7 +426,7 @@ void draw_open_box_str(char *label, char *value, int width) {
 /**
  * Function to draw an open box with no up or bottom lines to show given label and integer value for the given width of the box
  */
-void draw_open_box_int(char *label, unsigned long int value, int width) {
+void draw_open_box_int(char *label, unsigned long int value, const int width) {
     int right_side_spacing = width - 3 - strlen(label) - intlen(value);
     printf("│ "); // taking up 1 width
     printf("%s%lu", label, value);
@@ -407,7 +437,7 @@ void draw_open_box_int(char *label, unsigned long int value, int width) {
 /**
  * Function to draw an a line to close the box
  */
-void draw_box_bottom(int width) {
+void draw_box_bottom(const int width) {
     draw_bottom_line(width);
     printf("\n");
 }
