@@ -1,4 +1,4 @@
-/**
+/** TODO: Put necessary comments
  * The program provides mathematical, logical and binary details about a number provided from user
  * Its provides the following
  *  - Palindrome detection
@@ -28,6 +28,7 @@ int get_digit_count(unsigned long int num);
 int get_int_digit_sum(unsigned long int num);
 int is_prime_number(unsigned long int num);
 int check_odd_even(unsigned long int num);
+int is_palindrome(unsigned long int num);
 
 void draw_top_title_line(int width);
 void draw_bottom_title_line(int width);
@@ -46,7 +47,7 @@ int intlen(unsigned long int num);
 #define FORMAT_WIDTH 60
 
 int main() {
-    const int BINARY_LEN = 33;
+    const int BINARY_LEN = 33; // 1 bit reserved for null terminator
     unsigned long int number = accept_number("Reveal thy number for analysis");
 
     system("clear"); // for clearing terminal in Linux/macOS
@@ -68,6 +69,7 @@ int main() {
     draw_header("MATHEMATICAL DETAILS", FORMAT_WIDTH);
     draw_open_box_str("Prime Number          : ", is_prime_number(number) ? "YES" : "NO", FORMAT_WIDTH);
     draw_open_box_str("Even / Odd            : ", check_odd_even(number) ? "EVEN" : "ODD", FORMAT_WIDTH);
+    draw_open_box_str("Palindrome            : ", is_palindrome(number) ? "YES" : "NO", FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
     draw_header("BINARY VISUALISATION", FORMAT_WIDTH);
@@ -186,13 +188,13 @@ int get_int_digit_sum(unsigned long int num) {
 }
 
 /**
- * Function to to check if the given number is prime or not
+ * Function to check if the given number is prime or not
  */
 int is_prime_number(unsigned long int num) {
     int flag = 1;
     int unit_digit = num % 10;
 
-    // checking if num is divisible of 2 but not 2, is divisible by 3 but not 3 or unit digit is 5 (except number 5)
+    // checking if num is divisible of 2 but not 2, is divisible by 3 but not 3 or unit digit is 5 except number 5
     if (
         (num % 2 == 0 && num != 2 ) ||
         (unit_digit == 5 && num != 5) ||
@@ -216,10 +218,26 @@ int is_prime_number(unsigned long int num) {
 }
 
 /**
- * Function to to check if the given number is even or odd
+ * Function to check if the given number is even or odd
  */
 int check_odd_even(unsigned long int num) {
     return num % 2 == 0;
+}
+
+/**
+ * Function to check if the given number is a palindrome or not
+ */
+int is_palindrome(unsigned long int num) {
+    unsigned long int original_num = num;
+    unsigned long int reverse_num = 0;
+
+    while (num != 0) { // reversing the number through loop
+        int unit_digit = num % 10;
+        reverse_num = (reverse_num * 10) + unit_digit;
+        num /= 10;
+    }
+
+    return original_num == reverse_num;
 }
 
 /**
