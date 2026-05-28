@@ -1,16 +1,17 @@
 /** TODO: Put necessary comments
  * The program provides mathematical, logical and binary details about a number provided from user
  * Its provides the following
- *  - Palindrome detection
  *  - Binary representation
- *  - Binary palindrome detection
  *  - Digit counter
  *  - Digit sum calculation
+ *  - Prime number detection
+ *  - Even/Odd detection
+ *  - Palindrome detection
  *  - Armstrong number detection
  *  - Perfect number detection
  *  - Harshad number detection
- *  - Prime number detection
- *  - Even/Odd detection
+ *  - Binary palindrome detection
+ *  - Binary digit count (total, 1s, 0s)
  *  - Magic number score
  * Execute by -> gcc number_analyzer.c -o bin/number_analyzer -lm && ./bin/number_analyzer
  */
@@ -20,10 +21,21 @@
 #include <math.h> // for sqrt function
 #include <string.h> // for strlen type
 
+#define FORMAT_WIDTH 60
+
+typedef struct {
+    int is_binary_palindrome;
+    int total_bits_used;
+    int ones_count;
+    int zeros_count;
+} BinaryInfo;
+
 int main();
-unsigned long int accept_number(char *prompt);
+unsigned long int accept_number(const char *prompt);
 void get_binary_value(long unsigned int num, char *buffer, size_t size);
-void get_visual_binary(char *binary, char *buffer);
+void get_visual_binary(const char *binary, char *buffer);
+BinaryInfo get_binary_analysis(const char *binary);
+
 int get_digit_count(unsigned long int num);
 int get_int_digit_sum(unsigned long int num);
 int is_prime_number(unsigned long int num);
@@ -44,37 +56,43 @@ void draw_open_box_int(char *label, unsigned long int value, int width);
 void draw_box_bottom(int width);
 int intlen(unsigned long int num);
 
-#define FORMAT_WIDTH 60
-
 int main() {
     const int BINARY_LEN = 33; // 1 bit reserved for null terminator
+
+    char binary[BINARY_LEN]; // upto 4294967295
+    char visual_binary[BINARY_LEN];
+    BinaryInfo binary_info;
+
     unsigned long int number = accept_number("Reveal thy number for analysis");
 
     system("clear"); // for clearing terminal in Linux/macOS
 
-    char binary[BINARY_LEN]; // upto 4294967295
-    char visual_binary[BINARY_LEN];
     get_binary_value(number, binary, sizeof(binary));
     get_visual_binary(binary, visual_binary);
+    binary_info = get_binary_analysis(binary);
 
     draw_title("NUMBER ANALYZER", FORMAT_WIDTH);
 
     draw_header("INPUT DETAILS", FORMAT_WIDTH);
     draw_open_box_int("Entered Number        : ", number, FORMAT_WIDTH);
-    draw_open_box_str("Binary Representation : ", binary, FORMAT_WIDTH);
+    draw_open_box_str("Binary Notation : ", binary, FORMAT_WIDTH);
     draw_open_box_int("Digit Count           : ", get_digit_count(number), FORMAT_WIDTH);
     draw_open_box_int("Digit Sum             : ", get_int_digit_sum(number), FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
-    draw_header("MATHEMATICAL DETAILS", FORMAT_WIDTH);
+    draw_header("MATHEMATICAL ANALYSIS", FORMAT_WIDTH);
     draw_open_box_str("Prime Number          : ", is_prime_number(number) ? "YES" : "NO", FORMAT_WIDTH);
     draw_open_box_str("Even / Odd            : ", check_odd_even(number) ? "EVEN" : "ODD", FORMAT_WIDTH);
     draw_open_box_str("Palindrome            : ", is_palindrome(number) ? "YES" : "NO", FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
-    draw_header("BINARY VISUALISATION", FORMAT_WIDTH);
+    draw_header("BINARY ANALYSIS", FORMAT_WIDTH);
     draw_open_box_str("Binary                : ", binary, FORMAT_WIDTH);
     draw_open_box_str("Visual                : ", visual_binary, FORMAT_WIDTH);
+    draw_open_box_str("Palindrome            : ", binary_info.is_binary_palindrome ? "YES" : "NO", FORMAT_WIDTH);
+    draw_open_box_int("Total Bits Used       : ", binary_info.total_bits_used, FORMAT_WIDTH);
+    draw_open_box_int("Ones Count            : ", binary_info.ones_count, FORMAT_WIDTH);
+    draw_open_box_int("Zeros Count           : ", binary_info.zeros_count, FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
     draw_title("ANALYSIS COMPLETED SUCCESSFULLY", FORMAT_WIDTH);
@@ -85,7 +103,7 @@ int main() {
 /**
  * Function to accept user input, validate it, and return it
  */
-unsigned long int accept_number(char *prompt) {
+unsigned long int accept_number(const char *prompt) {
     const unsigned long int MAX_VAL = 4294967295;
 	unsigned long int value;
 	int is_value_allowed = 0;
@@ -115,7 +133,7 @@ unsigned long int accept_number(char *prompt) {
 }
 
 /**
- * Function to get binary value of the given number
+ * Function to write binary value of the given number in the buffer
  * int num - number to be converted to binary
  * char* buffer - pointer to character array to write into
  * size_t - maximum safe size of buffer to be written into
@@ -150,12 +168,43 @@ void get_binary_value(long unsigned int num, char *buffer, size_t size) {
     }
 }
 
-void get_visual_binary(char *binary, char *buffer) {
+/**
+ * Function to write visualised binary of the given binary value in the buffer
+ * char *binary - binary number to be visualised
+ * char *buffer - pointer to character array to write into
+ */
+void get_visual_binary(const char *binary, char *buffer) {
     for (size_t i = 0; binary[i] != '\0'; i++) {
         // strcat(buffer, binary[i] == '1' ? "█" : "░");
         // buffer[i] = binary[i] == '1' ? '#' : '_';
         buffer[i] = binary[i] == '1' ? '|' : '-';
     }
+}
+
+/**
+ * Function to get total bits, ones count, zeros count and to check if the given binary is palindrome or not
+ */
+BinaryInfo get_binary_analysis(const char *binary) {
+    BinaryInfo binary_info;
+
+    binary_info.is_binary_palindrome = 1; // assuming binary is palindrome
+    binary_info.total_bits_used = strlen(binary); // total bits are equal to length of the binary string value
+    binary_info.ones_count = 0;
+    binary_info.zeros_count = 0;
+
+    for (int i = 0; binary[i] != '\0'; i++) {
+        // counting the ones and zeros
+        if (binary[i] == '1') binary_info.ones_count++;
+        else binary_info.zeros_count++;
+
+        // traversing upto half the length of binary string until it is checked that binary is not palindrome
+        if ((i <=binary_info.total_bits_used / 2) && binary_info.is_binary_palindrome) {
+            // checking if i[th] values from start and end of binary string is not equal and if true, binary is not palindrome
+            if (binary[i] != binary[binary_info.total_bits_used - 1 - i]) binary_info.is_binary_palindrome = 0;
+        }
+    }
+
+    return binary_info;
 }
 
 /**
