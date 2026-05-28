@@ -12,7 +12,6 @@
  *  - Harshad number detection - number is evenly divisible by sum of its digits
  *  - Binary palindrome detection
  *  - Binary digit count (total, 1s, 0s)
- *  - Magic number score
  * Execute by -> gcc number_analyzer.c -o bin/number_analyzer -lm && ./bin/number_analyzer
  */
 #include <stddef.h> // for size_t
@@ -32,18 +31,19 @@ typedef struct {
 
 int main();
 unsigned long int accept_number(const char *prompt);
+
 void get_binary_value(long unsigned int num, char *buffer, size_t size);
 void get_visual_binary(const char *binary, char *buffer);
 BinaryInfo get_binary_analysis(const char *binary);
-
 int get_digit_count(unsigned long int num);
 int get_digit_sum(unsigned long int num);
 int is_prime_number(unsigned long int num);
 int check_odd_even(const unsigned long int num);
 int is_palindrome(unsigned long int num);
 int is_armstrong_number(unsigned long int num, int digit_count);
+int is_harshad_number(const unsigned long int num, int digit_sum);
 
-int get_unit_digit(unsigned long int num);
+int get_unit_digit(const unsigned long int num);
 
 void draw_top_title_line(const int width);
 void draw_bottom_title_line(const int width);
@@ -57,6 +57,7 @@ void draw_error(char *header, const int width);
 void draw_open_box_str(char *label, char *value, const int width);
 void draw_open_box_int(char *label, unsigned long int value, const int width);
 void draw_box_bottom(const int width);
+
 int intlen(unsigned long int num);
 
 int main() {
@@ -91,6 +92,7 @@ int main() {
     draw_open_box_str("Even / Odd            : ", check_odd_even(number) ? "EVEN" : "ODD", FORMAT_WIDTH);
     draw_open_box_str("Palindrome            : ", is_palindrome(number) ? "YES" : "NO", FORMAT_WIDTH);
     draw_open_box_str("Armstrong Number      : ", is_armstrong_number(number, digit_count) ? "YES" : "NO", FORMAT_WIDTH);
+    draw_open_box_str("Harshad Number        : ", is_harshad_number(number, digit_sum) ? "YES" : "NO", FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
     draw_header("BINARY ANALYSIS", FORMAT_WIDTH);
@@ -309,13 +311,21 @@ int is_armstrong_number(unsigned long int num, int digit_count) {
         num /= 10;
     }
 
+    // returning if number is equal to sum of its digits raised to the power number of digits
     return original_num == sum;
+}
+
+/**
+ * Function to check if the given number is a harshad number or not
+ */
+int is_harshad_number(const unsigned long int num, int digit_sum) {
+    return !(num % digit_sum); // returning if number is evenly divisible by sum of its digits
 }
 
 /**
  * Function to return unit digit of given number
  */
-int get_unit_digit(unsigned long int num) {
+int get_unit_digit(const unsigned long int num) {
     return num % 10;
 }
 
