@@ -15,9 +15,10 @@
  * Execute by -> gcc number_analyzer.c -o bin/number_analyzer -lm && ./bin/number_analyzer
  */
 #include <limits.h> // for CHAR_BIT, ULONG_MAX
+#include <errno.h> // provides errno
 #include <stddef.h> // for size_t
 #include <stdio.h> // for printf, scanf, getchar functions
-#include <stdlib.h> // for system function
+#include <stdlib.h> // for system, strtoul functions
 #include <time.h> // for clock function, CLOCKS_PER_SEC
 #include <math.h> // for sqrt function
 #include <string.h> // for strlen type
@@ -25,6 +26,10 @@
 // display optimized for 64 character tables
 // extremely large values may not fit in all views
 #define FORMAT_WIDTH 64
+#define CORNER_CHAR_WIDTH 2
+#define PADDING_CHAR_WIDTH 2
+#define L_PADDING_CHAR_WIDTH 1
+#define BINARY_LEN (sizeof(unsigned long int) * CHAR_BIT) + 1 // largest number available for the machine in bits + 1 bit reserved for null terminator
 
 typedef struct {
     int is_binary_palindrome;
@@ -42,7 +47,7 @@ BinaryInfo get_binary_analysis(const char *binary);
 int get_digit_count(unsigned long int num);
 int get_digit_sum(unsigned long int num);
 int is_prime_number(unsigned long int num);
-int check_odd_even(const unsigned long int num);
+int is_even(const unsigned long int num);
 int is_palindrome(unsigned long int num);
 int is_armstrong_number(unsigned long int num, const int digit_count);
 int is_perfect_number(const unsigned long int num);
@@ -57,34 +62,25 @@ void draw_bottom_line(const int width);
 
 void draw_title(const char *title, const int width);
 void draw_header(const char *header, const int width);
-void draw_error(const char *message, const int width);
+void draw_error(const char *message, int width);
 void draw_open_box_str(const char *label, const char *value, const int width);
 void draw_open_box_int(const char *label, const unsigned long int value, const int width);
 void draw_box_bottom(const int width);
 
 int main() {
-    clock_t start_time, end_time; // declaring with special data type to store time values
-    double time_taken;
-
-    const int BINARY_LEN = (sizeof(unsigned long int) * CHAR_BIT) + 1; // 1 bit reserved for null terminator
-    int digit_count, digit_sum;
-    char binary[BINARY_LEN]; // upto 4294967295
-    char visual_binary[BINARY_LEN];
-    BinaryInfo binary_info;
-    char end_title[FORMAT_WIDTH];
-
     unsigned long int number = accept_number("Reveal thy number for analysis");
-
-    start_time = clock(); // storing time value after taking user input
+    clock_t start_time = clock(); // storing time value after taking user input
 
     system("clear"); // for clearing terminal in Linux/macOS
 
-    digit_count = get_digit_count(number);
-    digit_sum = get_digit_sum(number);
+    int digit_count = get_digit_count(number);
+    int digit_sum = get_digit_sum(number);
 
+    char binary[BINARY_LEN];
+    char visual_binary[BINARY_LEN];
     get_binary_value(number, binary, sizeof(binary));
     get_visual_binary(binary, visual_binary);
-    binary_info = get_binary_analysis(binary);
+    BinaryInfo binary_info = get_binary_analysis(binary);
 
     draw_title("NUMBER ANALYZER", FORMAT_WIDTH);
 
@@ -97,7 +93,7 @@ int main() {
 
     draw_header("MATHEMATICAL ANALYSIS", FORMAT_WIDTH);
     draw_open_box_str("Prime Number          : ", is_prime_number(number) ? "YES" : "NO", FORMAT_WIDTH);
-    draw_open_box_str("Even / Odd            : ", check_odd_even(number) ? "EVEN" : "ODD", FORMAT_WIDTH);
+    draw_open_box_str("Even / Odd            : ", is_even(number) ? "EVEN" : "ODD", FORMAT_WIDTH);
     draw_open_box_str("Palindrome            : ", is_palindrome(number) ? "YES" : "NO", FORMAT_WIDTH);
     draw_open_box_str("Armstrong Number      : ", is_armstrong_number(number, digit_count) ? "YES" : "NO", FORMAT_WIDTH);
     draw_open_box_str("Perfect Number        : ", is_perfect_number(number) ? "YES" : "NO", FORMAT_WIDTH);
@@ -113,9 +109,10 @@ int main() {
     draw_open_box_int("Zeros Count           : ", binary_info.zeros_count, FORMAT_WIDTH);
     draw_box_bottom(FORMAT_WIDTH);
 
-    end_time = clock(); // storing time value after program execution
-	time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
+    clock_t end_time = clock(); // storing time value after program execution
+	double time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
 
+	char end_title[FORMAT_WIDTH];
 	snprintf(end_title, FORMAT_WIDTH, "ANALYSIS COMPLETED SUCCESSFULLY IN %lg SECONDS", time_taken);
 
     draw_title(end_title, FORMAT_WIDTH);
@@ -127,28 +124,68 @@ int main() {
  * Function to accept user input, validate it, and return it
  */
 unsigned long int accept_number(const char *prompt) {
-    const unsigned long int MAX_VAL = ULONG_MAX; // largest possible unsingned long number
-    char error_msg[FORMAT_WIDTH];
-	unsigned long int value;
-	int is_value_allowed = 0;
+    char input[100]; // stores raw text entered by the user
+    unsigned long int value; // stores the converted number
+	int is_value_allowed; // flag to control the loop
 
 	do {
 		printf("%s: ", prompt);
-		is_value_allowed = 1;
+		is_value_allowed = 1; // assuming success for user input
 
-		// checking if the input is valid integer
-		if (scanf("%lu", &value) != 1) {
-			draw_error("ERROR: Please provide a valid number", FORMAT_WIDTH);
-			while (getchar() != '\n'); // clearing the buffer
-			is_value_allowed = 0; // resetting the value to repeat
-		}
+		/**
+		 * fgets reads a line of stream from a text - safely, prevents buffer overflows and allows validation
+		 * input - storage area for user
+		 * sizeof(input) - limit on input characters
+		 * stdin - standard input stream (keyboard)
+		 * fgets returns &input[0] (pointer of first address of array of characters) if successful
+		 */
+		if (fgets(input, sizeof(input), stdin) == NULL) {
+            draw_error("ERROR: Failed to read input", FORMAT_WIDTH);
+            is_value_allowed = 0;
+		} else {
+			char *ptr = input;
 
-		if (value > MAX_VAL) {
-    		// formatting MAX_VAL into error message
-			snprintf(error_msg, FORMAT_WIDTH, "ERROR: Please provide a positive number less than %lu", MAX_VAL);
+			while (*ptr == ' ' || *ptr == '\t') ptr++; // skip leading spaces and tabs
 
-		    draw_error(error_msg, FORMAT_WIDTH);
-    		is_value_allowed = 0; // resetting the value to repeat
+			if (*ptr == '\n' || *ptr == '\0') { // checking empty input
+    			draw_error("ERROR: Please enter a number", FORMAT_WIDTH);
+          		is_value_allowed = 0; // resetting the value to repeat
+			} else if (*ptr == '-') { // checking negative number
+                draw_error("ERROR: Please provide a positive number", FORMAT_WIDTH);
+                is_value_allowed = 0;
+			} else {
+                errno = 0; // global error indicator to store error information
+                char *endptr; // to be used by strtoul
+
+                /**
+    			 * strtoul converts of string to unsigned long -
+    			 * along with overflow detection error detection, leftover character detection and base selection
+    			 * input - the string to be converted
+    			 * &endptr - pointer to point to the first character that was not converted
+    			 * 10 - to interprete input as base decimal
+    			 */
+    			value = strtoul(ptr, &endptr, 10);
+
+                if (ptr == endptr) { // checking if no digits found
+                    draw_error("ERROR: Please provide a valid number", FORMAT_WIDTH);
+                    is_value_allowed = 0;
+                } else if (errno == ERANGE) { // checking if strtoul report an overflow (number too large for unsigned long)
+     			int error_len = FORMAT_WIDTH + get_digit_count(ULONG_MAX);
+                    char error_msg[error_len];
+
+                    /**
+                    * formatting ULONG_MAX into error message
+                    * snprintf prevents writing beyond the buffer size
+                    */
+              		snprintf(error_msg, error_len, "ERROR: Please provide a number less than %lu", ULONG_MAX);
+
+                    draw_error(error_msg, FORMAT_WIDTH);
+              		is_value_allowed = 0; // resetting the value to repeat
+    			} else if (*endptr != '\n' && *endptr != '\0') { // check for invalid characters
+                    draw_error("ERROR: Please provide a valid number", FORMAT_WIDTH);
+              		is_value_allowed = 0; // resetting the value to repeat
+    			}
+			}
 		}
 	} while (!is_value_allowed);
 
@@ -162,16 +199,15 @@ unsigned long int accept_number(const char *prompt) {
  * size_t - maximum safe size of buffer to be written into
  */
 void get_binary_value(long unsigned int num, char *buffer, size_t size) {
-    int write_index = 0;
-    char temp;
-
     if (size == 0) return;
     if (num == 0) {
         if (size > 1) {
             buffer[0] = '0';
-            buffer[1] = '\0'; // null terminator
+            buffer[1] = '\0';
         }
     } else {
+        int write_index = 0;
+
         // loop until num is 0 or buffer is written upto size - 1 characters
         // 1 bit reserved for null terminator
         while (num != 0 && write_index < size - 1) {
@@ -179,12 +215,12 @@ void get_binary_value(long unsigned int num, char *buffer, size_t size) {
             num /= 2; // repeatedly dividing by 2 extracts binary digits from least significant bit
             write_index++;
         }
-        buffer[write_index] = '\0'; // null terminator to end string
+        buffer[write_index] = '\0';
 
         // write_index has become now the length of buffer
         // reversing string to form correct binary code
         for (int i = 0; i < (write_index / 2); i++) {
-            temp = buffer[i];
+            char temp = buffer[i];
             buffer[i] = buffer[write_index-i-1];
             buffer[write_index-i-1] = temp;
         }
@@ -204,7 +240,7 @@ void get_visual_binary(const char *binary, char *buffer) {
         // buffer[i] = binary[i] == '1' ? '#' : '_';
         buffer[i] = binary[i] == '1' ? '|' : '-';
     }
-    buffer[i] = '\0'; // null terminator to end string
+    buffer[i] = '\0';
 }
 
 /**
@@ -270,7 +306,6 @@ int get_digit_sum(unsigned long int num) {
 int is_prime_number(unsigned long int num) {
     int flag = 1;
     int unit_digit = get_unit_digit(num);
-    unsigned long int num_root;
 
     // checking if num is divisible of 2 but not 2, is divisible by 3 but not 3 or unit digit is 5 except number 5
     if (
@@ -282,8 +317,8 @@ int is_prime_number(unsigned long int num) {
         if (num < 2) flag = 0;
         else {
             // checking if the number is divisible by all odd numbers greater than 2 and less than its own square root
-            num_root = sqrt(num);
-            for (int i = 3; i <= num_root; i += 2) {
+            unsigned long int num_root = (unsigned long int)sqrt(num); // casted into int as sqrt returns double
+            for (unsigned long int i = 3; i <= num_root; i += 2) {
                 if (!(num % i)) {
                     flag = 0;
                     break; // breaking the loop if confirmed that current_number is not prime
@@ -296,9 +331,9 @@ int is_prime_number(unsigned long int num) {
 }
 
 /**
- * Function to check if the given number is even or odd
+ * Function to check if the given number is even
  */
-int check_odd_even(const unsigned long int num) {
+int is_even(const unsigned long int num) {
     return num % 2 == 0;
 }
 
@@ -308,10 +343,9 @@ int check_odd_even(const unsigned long int num) {
 int is_palindrome(unsigned long int num) {
     const unsigned long int original_num = num;
     unsigned long int reverse_num = 0;
-    int unit_digit;
 
     while (num != 0) { // reversing the number through loop
-        unit_digit = get_unit_digit(num);
+        int unit_digit = get_unit_digit(num);
         reverse_num = (reverse_num * 10) + unit_digit;
         num /= 10;
     }
@@ -325,11 +359,10 @@ int is_palindrome(unsigned long int num) {
 int is_armstrong_number(unsigned long int num, const int digit_count) {
     const unsigned long int original_num = num;
     int sum = 0;
-    int unit_digit;
 
     while (num != 0) { // reversing the number through loop
-        unit_digit = get_unit_digit(num);
-        sum += pow(unit_digit, digit_count);
+        int unit_digit = get_unit_digit(num);
+        sum += (unsigned long int)pow(unit_digit, digit_count); // casted into int as pow returns double
         num /= 10;
     }
 
@@ -342,7 +375,7 @@ int is_armstrong_number(unsigned long int num, const int digit_count) {
  */
 int is_perfect_number(const unsigned long int num) {
     int sum = 0;
-    int traverse_upto = num / 2;
+    unsigned long int traverse_upto = num / 2;
 
     for (int i = 1; i <= traverse_upto; i++) {
         if (num % i == 0) { // checking for proper divisors of the number
@@ -372,7 +405,8 @@ int get_unit_digit(const unsigned long int num) {
  * Function to draw top line for title with symbols for the given width
  */
 void draw_top_title_line(const int width) {
-    int actual_width = width - 2; // 2 characters reserved for corners
+    int actual_width = width - CORNER_CHAR_WIDTH;
+
     printf("╔");
     for (int i = 0; i < actual_width; i++) printf("═");
     printf("╗\n");
@@ -382,7 +416,7 @@ void draw_top_title_line(const int width) {
  * Function to draw bottom line for title with symbols for the given width
  */
 void draw_bottom_title_line(const int width) {
-    int actual_width = width - 2; // 2 characters reserved for corners
+    int actual_width = width - CORNER_CHAR_WIDTH;
 
     printf("╚");
     for (int i = 0; i < actual_width; i++) printf("═");
@@ -393,7 +427,7 @@ void draw_bottom_title_line(const int width) {
  * Function to draw bottom line for header with symbols for the given width
  */
 void draw_bottom_header_line(const int width) {
-    int actual_width = width - 2; // 2 characters reserved for corners
+    int actual_width = width - CORNER_CHAR_WIDTH;
 
     printf("├");
     for (int i = 0; i < actual_width; i++) printf("─");
@@ -404,7 +438,7 @@ void draw_bottom_header_line(const int width) {
  * Function to draw top line with symbols for the given width
  */
 void draw_top_line(const int width) {
-    int actual_width = width - 2; // 2 characters reserved for corners
+    int actual_width = width - CORNER_CHAR_WIDTH;
 
     printf("┌");
     for (int i = 0; i < actual_width; i++) printf("─");
@@ -415,7 +449,7 @@ void draw_top_line(const int width) {
  * Function to draw bottom line with symbols for the given width
  */
 void draw_bottom_line(const int width) {
-    int actual_width = width - 2; // 2 characters reserved for corners
+    int actual_width = width - CORNER_CHAR_WIDTH;
 
     printf("└");
     for (int i = 0; i < actual_width; i++) printf("─");
@@ -426,7 +460,7 @@ void draw_bottom_line(const int width) {
  * Function to draw a box with center aligned given title for the given width of the box
  */
 void draw_title(const char *title, const int width) {
-    int total_empty_space = width - (int)strlen(title) - 2; // 2 characters reserved for corners
+    int total_empty_space = width - (int)strlen(title) - CORNER_CHAR_WIDTH;
     int one_side_spacing = total_empty_space / 2;
     int other_side_spacing = total_empty_space - one_side_spacing;
 
@@ -444,7 +478,7 @@ void draw_title(const char *title, const int width) {
  * Function to draw a box with left aligned given header for the given width of the box
  */
 void draw_header(const char *header, const int width) {
-    int right_side_spacing = width - 3 - (int)strlen(header); // 2 characters reserved for corners and 1 character for left padding
+    int right_side_spacing = width - (int)strlen(header) - CORNER_CHAR_WIDTH - L_PADDING_CHAR_WIDTH;
 
     draw_top_line(width);
     printf("│ ");
@@ -457,14 +491,19 @@ void draw_header(const char *header, const int width) {
 /**
  * Function to draw a box with left aligned given error for the given width of the box
  */
-void draw_error(const char *message, const int width) {
-    int right_side_spacing = width - 3 - (int)strlen(message); // 2 characters reserved for corners and 1 character for left padding
+void draw_error(const char *message, int width) {
+    int message_len = (int)strlen(message);
+
+    if (width < (message_len + CORNER_CHAR_WIDTH + PADDING_CHAR_WIDTH))
+        width = message_len + CORNER_CHAR_WIDTH + PADDING_CHAR_WIDTH; // increase width of the box if given width is smaller
+
+    int right_side_spacing = width - message_len - CORNER_CHAR_WIDTH - PADDING_CHAR_WIDTH;
 
     draw_top_line(width);
     printf("│ ");
     printf("%s", message);
     for (int i = 0; i < right_side_spacing; i++) printf(" ");
-    printf("│\n");
+    printf(" │\n");
     draw_box_bottom(width);
 }
 
@@ -472,7 +511,7 @@ void draw_error(const char *message, const int width) {
  * Function to draw an open box with no up or bottom lines to show given label and string value for the given width of the box
  */
 void draw_open_box_str(const char *label, const char *value, const int width) {
-    int right_side_spacing = width - 3 - (int)strlen(label) - (int)strlen(value); // 2 characters reserved for corners and 1 character for left padding
+    int right_side_spacing = width - (int)strlen(label) - (int)strlen(value) - CORNER_CHAR_WIDTH - L_PADDING_CHAR_WIDTH;
 
     printf("│ ");
     printf("%s%s", label, value);
@@ -484,7 +523,7 @@ void draw_open_box_str(const char *label, const char *value, const int width) {
  * Function to draw an open box with no up or bottom lines to show given label and integer value for the given width of the box
  */
 void draw_open_box_int(const char *label, const unsigned long int value, const int width) {
-    int right_side_spacing = width - 3 - (int)strlen(label) - get_digit_count(value); // 2 characters reserved for corners and 1 character for left padding
+    int right_side_spacing = width - (int)strlen(label) - get_digit_count(value) - CORNER_CHAR_WIDTH - L_PADDING_CHAR_WIDTH;
 
     printf("│ ");
     printf("%s%lu", label, value);
