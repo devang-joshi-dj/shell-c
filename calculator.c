@@ -21,7 +21,6 @@
 
 #define MENU_ITEMS 15
 
-int main();
 void show_welcome_message();
 int show_operations_menu();
 

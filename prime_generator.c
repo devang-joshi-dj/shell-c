@@ -16,7 +16,6 @@
 #include <time.h> // for clock function, CLOCKS_PER_SEC
 #include <math.h> // for sqrt function
 
-int main();
 int accept_prime_num_upto(char *prompt);
 int is_prime_num (int current_number, int primes[], int total_prime);
 int getIntDigitSum(int num);
