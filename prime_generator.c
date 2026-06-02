@@ -16,18 +16,18 @@
 #include <time.h> // for clock function, CLOCKS_PER_SEC
 #include <math.h> // for sqrt function
 
+#define PRIMES_PER_LINE 15
+
 int accept_prime_num_upto(char *prompt);
 int is_prime_num (int current_number, int primes[], int total_prime);
-int getIntDigitSum(int num);
-int getUnitDigit(int num);
-void print_primes(int primes[], int total_prime, int first_prime, long int last_prime);
+void print_primes(int primes[], int total_prime, int first_prime, int last_prime);
 
 int main() {
-    clock_t start_calc, end_calc, end_total; // declaring with special data type to store time values
-    double calc_time_taken, total_time_taken;
+    clock_t start_calc, end_calc, end_execution; // declaring with special data type to store time values
+    double calc_time_taken, execution_time_taken;
 
     // taking user input for maximum number upto which program will run to find prime values
-	long int prime_num_upto = accept_prime_num_upto("Please enter the highest number upto which you want to find prime numbers");
+    int prime_num_upto = accept_prime_num_upto("Please enter the highest number upto which you want to find prime numbers");
 
 	start_calc = clock(); // storing time value after taking user input
 
@@ -57,14 +57,14 @@ int main() {
 
 	print_primes(primes, total_prime, PRIME_NUM_FROM, prime_num_upto); // prints all generated prime numbers
 
-	end_total = clock(); // storing time value after program execution
+	end_execution = clock(); // storing time value after program execution
 
 	calc_time_taken = ((double)(end_calc - start_calc)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
-	total_time_taken = ((double)(end_total - start_calc)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
+	execution_time_taken = ((double)(end_execution - start_calc)) / CLOCKS_PER_SEC; // elapsed clock ticks converted into seconds
 
 	// prints calculation time and total run time of the program
-	printf("Calculation Time:\t%f seconds \n", calc_time_taken);
-	printf("Total Time:\t%f seconds \n", total_time_taken);
+	printf("Calculation Time: \t%f seconds \n", calc_time_taken);
+	printf("Execution Time:   \t%f seconds \n", execution_time_taken);
 
 	return 0;
 }
@@ -106,7 +106,7 @@ int is_prime_num (int current_number, int primes[], int total_prime) {
         (current_number % 3 == 0 && current_number != 3)
     ) flag = 0;
     else {
-        // checking if the number is divisible by all the prime numbers less than its own square root
+        // checking if the number is divisible by known prime numbers upto square root of current_number
         int current_num_root = sqrt(current_number);
         for (int i = 0; i < total_prime; i++) {
             if (primes[i] <= current_num_root) {
@@ -115,7 +115,7 @@ int is_prime_num (int current_number, int primes[], int total_prime) {
                     break; // breaking the loop if confirmed that current_number is not prime
                 }
             } else {
-                break; // breaking the loop if confirmed that we have parsed founded primes upto square root of current_number
+                break; // breaking the loop if confirmed that we have parsed known primes upto square root of current_number
             }
         }
     }
@@ -125,14 +125,14 @@ int is_prime_num (int current_number, int primes[], int total_prime) {
 /**
  * Function to parse through given array of primes and print all the items
  */
-void print_primes(int primes[], int total_prime, int first_prime, long int last_prime) {
+void print_primes(int primes[], int total_prime, int first_prime, int last_prime) {
     for (int i = 0; i < total_prime; i++) {
         printf("%d\t", primes[i]);
-        if ((i + 1) % 15 == 0) printf("\n"); // to jump on next line after 15 tab included entries in single line
+        if ((i + 1) % PRIMES_PER_LINE == 0) printf("\n"); // to jump on next line after PRIMES_PER_LINE tab included entries in single line
     }
 
     // prints total prime numbers and the range being calculated from
 	printf("\nTotal Prime Numbers found: %d\n", total_prime);
-	printf("From %d to %ld\n", first_prime, last_prime);
+	printf("From %d to %d\n", first_prime, last_prime);
 	printf("------------------------------------------\n");
 }

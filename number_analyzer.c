@@ -214,7 +214,7 @@ AnalysisResult analyze_number(const unsigned long int num) {
  * Function to print the analysis of the number provided by user
  */
 void print_analysis(const AnalysisResult *analysis) {
-    draw_title("NUMBER ANALYZER", FORMAT_WIDTH);
+    draw_title("NUMBER ANALYZER v1.0", FORMAT_WIDTH);
 
     draw_header("INPUT DETAILS", FORMAT_WIDTH);
     draw_open_box_ulong("Entered Number        : ", analysis->number, FORMAT_WIDTH);
@@ -370,7 +370,7 @@ bool is_prime_number(unsigned long int num) {
     else if (num % 5 == 0) return false;
     else {
         // checking if the number is divisible by all odd numbers greater than 2 and less than its own square root
-        unsigned long int num_root = (unsigned long int)sqrt(num); // casted into int as sqrt returns double
+        unsigned long int num_root = (unsigned long int)sqrt(num); // casted into unsigned long as sqrt returns double
         for (unsigned long int i = 3; i <= num_root; i += 2) {
             if (!(num % i)) {
                 return false; // current_number is not prime
@@ -542,7 +542,11 @@ void draw_title(const char *title, const int width) {
  * Function to draw a box with left aligned given header for the given width of the box
  */
 void draw_header(const char *header, const int width) {
-    int right_padding = width - (int)strlen(header) - CORNER_CHAR_WIDTH - L_PADDING_CHAR_WIDTH;
+    int right_padding =
+        width
+        - (int)strlen(header)
+        - CORNER_CHAR_WIDTH
+        - L_PADDING_CHAR_WIDTH;
 
     draw_top_line(width);
     printf("│ ");
@@ -575,7 +579,12 @@ void draw_error(const char *message, int width) {
  * Function to draw an open box with no up or bottom lines to show given label and string value for the given width of the box
  */
 void draw_open_box_str(const char *label, const char *value, const int width) {
-    int right_padding = width - (int)strlen(label) - (int)strlen(value) - CORNER_CHAR_WIDTH - L_PADDING_CHAR_WIDTH;
+    int right_padding =
+        width
+        - (int)strlen(label)
+        - (int)strlen(value)
+        - CORNER_CHAR_WIDTH
+        - L_PADDING_CHAR_WIDTH;
 
     printf("│ ");
     printf("%s%s", label, value);
@@ -587,7 +596,12 @@ void draw_open_box_str(const char *label, const char *value, const int width) {
  * Function to draw an open box with no up or bottom lines to show given label and unsigned long int value for the given width of the box
  */
 void draw_open_box_ulong(const char *label, const unsigned long int value, const int width) {
-    int right_padding = width - (int)strlen(label) - (int)get_digit_count(value) - CORNER_CHAR_WIDTH - L_PADDING_CHAR_WIDTH;
+    int right_padding =
+        width
+        - (int)strlen(label)
+        - (int)get_digit_count(value)
+        - CORNER_CHAR_WIDTH
+        - L_PADDING_CHAR_WIDTH;
 
     printf("│ ");
     printf("%s%lu", label, value);
@@ -599,7 +613,12 @@ void draw_open_box_ulong(const char *label, const unsigned long int value, const
  * Function to draw an open box with no up or bottom lines to show given label and size_t value for the given width of the box
  */
 void draw_open_box_size_t(const char *label, const size_t value, const int width) {
-    int right_padding = width - (int)strlen(label) - (int)get_digit_count((int)value) - CORNER_CHAR_WIDTH - L_PADDING_CHAR_WIDTH;
+    int right_padding =
+        width
+        - (int)strlen(label)
+        - (int)get_digit_count((unsigned long int)value)
+        - CORNER_CHAR_WIDTH
+        - L_PADDING_CHAR_WIDTH;
 
     printf("│ ");
     printf("%s%zu", label, value);
