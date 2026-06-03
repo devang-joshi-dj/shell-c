@@ -14,11 +14,11 @@
  *  - Binary digit count (total, 1s, 0s)
  * Execute by -> gcc number_analyzer.c -o bin/number_analyzer -lm && ./bin/number_analyzer
  */
+#include <stdio.h> // for printf, fgets functions
+#include <stdlib.h> // for system, strtoul functions
 #include <limits.h> // for CHAR_BIT, ULONG_MAX
 #include <errno.h> // provides errno
 #include <stddef.h> // for size_t
-#include <stdio.h> // for printf, scanf, getchar functions
-#include <stdlib.h> // for system, strtoul functions
 #include <time.h> // for clock function, CLOCKS_PER_SEC
 #include <math.h> // for sqrt function
 #include <string.h> // for strlen type
