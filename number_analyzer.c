@@ -44,6 +44,11 @@ typedef struct {
 } BinaryInfo;
 
 typedef struct {
+    size_t done_process;
+    size_t total_process;
+} AnalysisProgress;
+
+typedef struct {
     unsigned long int number;
     size_t digit_count;
     size_t digit_sum;
@@ -60,6 +65,7 @@ typedef struct {
 
 unsigned long int accept_number(const char *prompt);
 AnalysisResult analyze_number(const unsigned long int num);
+void draw_analysis(const unsigned long int num);
 void print_analysis(const AnalysisResult *analysis);
 
 void number_to_binary(long unsigned int num, char *buffer, size_t size);
@@ -95,9 +101,10 @@ int main() {
     const unsigned long int number = accept_number("Reveal thy number for analysis");
     clock_t start_time = clock(); // storing time value after taking user input
 
-    system("clear"); // for clearing terminal in Linux/macOS
-
+    draw_analysis(number);
     AnalysisResult analysis = analyze_number(number);
+
+    system("clear"); // for clearing terminal in Linux/macOS
 
     print_analysis(&analysis);
 
@@ -188,7 +195,7 @@ unsigned long int accept_number(const char *prompt) {
 }
 
 /**
- * Function to analyze number and calculate everything before printing
+ * Function to analyze number, show loader and calculate everything before printing
  */
 AnalysisResult analyze_number(const unsigned long int num) {
     AnalysisResult result = {0}; // initialize all fields to zero to ensure all members have known default values
@@ -208,6 +215,21 @@ AnalysisResult analyze_number(const unsigned long int num) {
     result.binary_info = get_binary_analysis(result.binary);
 
     return result;
+}
+
+/**
+ * Function to draw loading screen
+ */
+void draw_analysis(const unsigned long int num) {
+    system("clear"); // for clearing terminal in Linux/macOS
+
+    draw_header("ANALYSIS PROGRESS", FORMAT_WIDTH);
+
+    if (num >= 100000000000000000UL) draw_open_box_str( "Large Number Detected. ", "Analysis may take a while.", FORMAT_WIDTH);
+
+    draw_open_box_str("Analyzing...", "", FORMAT_WIDTH);
+    draw_box_bottom(FORMAT_WIDTH);
+    // fflush(stdout); // to clear the output buffer - for executing above printf before moving forward
 }
 
 /**
