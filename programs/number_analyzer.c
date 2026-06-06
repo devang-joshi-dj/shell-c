@@ -121,7 +121,12 @@ unsigned long int accept_number(const char *prompt) {
 				draw_error("ERROR: Please provide a positive number", FORMAT_WIDTH);
 				is_value_allowed = 0;
 			} else {
-				errno = 0; // global error indicator to store error information
+				/**
+				 * global error indicator to store error information
+				 * reset before strtoul so overflow can be detected reliably
+				 */
+				errno = 0;
+
 				char *endptr; // to be used by strtoul
 
 				/**

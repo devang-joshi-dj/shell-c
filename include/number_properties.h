@@ -2,6 +2,7 @@
 #define NUMBER_PROPERTIES
 
 #include <stddef.h> // for size_t type
+#include <stdbool.h> // for bool type
 
 bool is_prime_number(unsigned long int num);
 bool is_even(const unsigned long int num);
