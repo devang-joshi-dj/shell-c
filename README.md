@@ -4,9 +4,16 @@ A collection of terminal-based C programs built while learning the C programming
 
 ## Programs
 
-- `prime_generator.c` Prints all prime numbers up to a user-given number.
-- `number_analyzer.c` Provides mathematical, logical and binary details about a number provided from user
-- `calculator.c` **WORK IN PROGRESS** Calculator to perform mathematical operations through interactive menu
+### Prime Generator
+Prints all prime numbers up to a user-provided number.
+
+### Number Analyzer
+Analyzes a number and displays mathematical, logical and binary properties of the number provided from user
+
+### Calculator (WIP)
+Interactive calculator to perform mathematical operations through a menu-driven interface
+
+---
 
 ## Project Structure
 ```text
@@ -23,6 +30,8 @@ shell-c/
 ├─ bin/         # Compiled executables
 	└─ .gitkeep
 ```
+
+---
 
 ## Building
 
@@ -47,6 +56,8 @@ Remove compiled executables:
 ```bash
 make clean
 ```
+
+---
 
 ## Development Notes
 
