@@ -14,9 +14,8 @@
  * Even/Odd, Prime Number, Palindrome detector of result
  * History of every calculation is recorded and can be cleared
  * Exit with exit message of active session time, calculations done in the exited session of the program
- * Execute by -> gcc calculator.c -o bin/calculator && ./bin/calculator
  */
-#include <stdio.h> // for printf, scanf, getchar functions
+#include <stdio.h> // for printf functions
 #include <stdlib.h> // for system function
 
 #define MENU_ITEMS 15
@@ -25,18 +24,18 @@ void show_welcome_message();
 int show_operations_menu();
 
 int main() {
-    system("clear"); // for clearing terminal in Linux/macOS
-    show_welcome_message();
-    show_operations_menu();
+	system("clear"); // for clearing terminal in Linux/macOS
+	show_welcome_message();
+	show_operations_menu();
 
-    return 0;
+	return 0;
 }
 
 /**
  * Function to show welcome message to user
  */
 void show_welcome_message() {
-    printf("Welcome to Calculator. Thank You for opening it. It tells me that you already very smart person ;)\n");
+	printf("Welcome to Calculator. Thank You for opening it. It tells me that you already very smart person ;)\n");
 }
 
 /**
@@ -45,7 +44,7 @@ void show_welcome_message() {
 int show_operations_menu() {
 	int value;
 	char menu[MENU_ITEMS][MENU_ITEMS*4] = {
-	    "Please choose from the menu below to select an operation:",
+		"Please choose from the menu below to select an operation:",
 		"Addition",
 		"Subtraction",
 		"Multiplication",
@@ -63,8 +62,8 @@ int show_operations_menu() {
 	};
 
 	for (int i = 0; i < MENU_ITEMS; i++) {
-	    if (!i) printf("%s\n", menu[0]);
-	    printf("%d. %s\n", i, menu[i]);
+		if (!i) printf("%s\n", menu[0]);
+		printf("%d. %s\n", i, menu[i]);
 	}
 
 	return value;

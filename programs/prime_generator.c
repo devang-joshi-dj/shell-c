@@ -9,11 +9,10 @@
  *  - If the sum of the digits is divisible by 3, the number is not prime.
  *  - Divide the number by all prime numbers (e.g., 7, 11, 13) that are less than sqrt of number.
  *  - If none of these divisions result in a whole number, the number is prime.
- * Execute by -> gcc prime_generator.c -o bin/prime_generator -lm && ./bin/prime_generator
  */
-#include <stdio.h> // for printf, scanf, getchar functions
+#include <stdio.h> // for fflush, getchar, printf, scanf functions
 #include <stdlib.h> // for system function
-#include <time.h> // for clock function, CLOCKS_PER_SEC
+#include <time.h> // for CLOCKS_PER_SEC, clock function, clock_t
 #include <math.h> // for sqrt function
 
 #define PRIMES_PER_LINE 15
@@ -23,11 +22,11 @@ int is_prime_num (int current_number, int primes[], int total_prime);
 void print_primes(int primes[], int total_prime, int first_prime, int last_prime);
 
 int main() {
-    clock_t start_calc, end_calc, end_execution; // declaring with special data type to store time values
-    double calc_time_taken, execution_time_taken;
+	clock_t start_calc, end_calc, end_execution; // declaring with special data type to store time values
+	double calc_time_taken, execution_time_taken;
 
-    // taking user input for maximum number upto which program will run to find prime values
-    int prime_num_upto = accept_prime_num_upto("Please enter the highest number upto which you want to find prime numbers");
+	// taking user input for maximum number upto which program will run to find prime values
+	int prime_num_upto = accept_prime_num_upto("Please enter the highest number upto which you want to find prime numbers");
 
 	start_calc = clock(); // storing time value after taking user input
 
@@ -97,41 +96,41 @@ int accept_prime_num_upto(char *prompt) {
  * Function to check if number is prime
  */
 int is_prime_num (int current_number, int primes[], int total_prime) {
-    int flag = 1;
-    int unit_digit = current_number % 10;
+	int flag = 1;
+	int unit_digit = current_number % 10;
 
-    // checking if unit digit is 5 (except number 5) or sum of digits is divisible by 3 but not 3
-    if (
-        (unit_digit == 5 && current_number != 5) ||
-        (current_number % 3 == 0 && current_number != 3)
-    ) flag = 0;
-    else {
-        // checking if the number is divisible by known prime numbers upto square root of current_number
-        int current_num_root = sqrt(current_number);
-        for (int i = 0; i < total_prime; i++) {
-            if (primes[i] <= current_num_root) {
-                if (!(current_number % primes[i])) {
-                    flag = 0;
-                    break; // breaking the loop if confirmed that current_number is not prime
-                }
-            } else {
-                break; // breaking the loop if confirmed that we have parsed known primes upto square root of current_number
-            }
-        }
-    }
-    return flag;
+	// checking if unit digit is 5 (except number 5) or sum of digits is divisible by 3 but not 3
+	if (
+		(unit_digit == 5 && current_number != 5) ||
+		(current_number % 3 == 0 && current_number != 3)
+	) flag = 0;
+	else {
+		// checking if the number is divisible by known prime numbers upto square root of current_number
+		int current_num_root = sqrt(current_number);
+		for (int i = 0; i < total_prime; i++) {
+			if (primes[i] <= current_num_root) {
+				if (!(current_number % primes[i])) {
+					flag = 0;
+					break; // breaking the loop if confirmed that current_number is not prime
+				}
+			} else {
+				break; // breaking the loop if confirmed that we have parsed known primes upto square root of current_number
+			}
+		}
+	}
+	return flag;
 }
 
 /**
  * Function to parse through given array of primes and print all the items
  */
 void print_primes(int primes[], int total_prime, int first_prime, int last_prime) {
-    for (int i = 0; i < total_prime; i++) {
-        printf("%d\t", primes[i]);
-        if ((i + 1) % PRIMES_PER_LINE == 0) printf("\n"); // to jump on next line after PRIMES_PER_LINE tab included entries in single line
-    }
+	for (int i = 0; i < total_prime; i++) {
+		printf("%d\t", primes[i]);
+		if ((i + 1) % PRIMES_PER_LINE == 0) printf("\n"); // to jump on next line after PRIMES_PER_LINE tab included entries in single line
+	}
 
-    // prints total prime numbers and the range being calculated from
+	// prints total prime numbers and the range being calculated from
 	printf("\nTotal Prime Numbers found: %d\n", total_prime);
 	printf("From %d to %d\n", first_prime, last_prime);
 	printf("------------------------------------------\n");

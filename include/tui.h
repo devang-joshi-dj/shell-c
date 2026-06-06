@@ -1,0 +1,36 @@
+#ifndef TUI_H
+#define TUI_H
+
+#include <stddef.h> // for size_t type
+#include <stdbool.h> // for bool type
+
+void draw_title(const char *title, const int width);
+void draw_header(const char *header, const int width);
+void draw_error(const char *message, int width);
+void draw_open_box_str(
+	const char *label,
+	const char *value,
+	const int width
+);
+
+void draw_open_box_ulong(
+	const char *label,
+	const unsigned long int value,
+	const int width
+);
+
+void draw_open_box_size_t(
+	const char *label,
+	const size_t value,
+	const int width
+);
+
+void draw_open_box_bool(
+	const char *label,
+	const bool value,
+	const int width
+);
+
+void draw_box_bottom(const int width);
+
+#endif
