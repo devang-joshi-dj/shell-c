@@ -6,7 +6,7 @@
 #define PADDING_CHAR_WIDTH 2
 #define L_PADDING_CHAR_WIDTH 1
 
-// static functions are private to tui.c, not global
+// static functions are private to this file, not global
 // for internal use only
 static void draw_top_title_line(const int width);
 static void draw_bottom_title_line(const int width);

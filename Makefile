@@ -35,10 +35,13 @@ LDFLAGS = -lm
 all: $(PROGRAM_NAMES)
 
 number_analyzer:
-	$(CC) $(PROG)/number_analyzer.c $(SRC)/tui.c $(COMMONFLAGS) -o $(BIN)/number_analyzer $(LDFLAGS)
+	$(CC) $(PROG)/number_analyzer.c \
+	$(SRC)/tui.c $(SRC)/digits.c $(SRC)/number_properties.c \
+	$(COMMONFLAGS) -o $(BIN)/number_analyzer $(LDFLAGS)
 
 prime_generator:
-	$(CC) $(PROG)/prime_generator.c $(COMMONFLAGS) -o $(BIN)/prime_generator $(LDFLAGS)
+	$(CC) $(PROG)/prime_generator.c \
+	$(COMMONFLAGS) -o $(BIN)/prime_generator $(LDFLAGS)
 
 run-na: number_analyzer
 	./$(BIN)/number_analyzer
