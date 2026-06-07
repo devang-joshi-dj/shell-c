@@ -1,3 +1,8 @@
+/**
+ * number_properties.c
+ *
+ * Mathematical property checks for numbers.
+ */
 #include <stdbool.h> // for bool type
 #include <math.h> // for pow, sqrt function
 #include "number_properties.h"

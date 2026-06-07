@@ -1,17 +1,8 @@
 /**
- * The program provides mathematical, logical and binary details about a number provided from user
- * Its provides the following
- *  - Binary notation
- *  - Digit counter
- *  - Digit sum calculation
- *  - Prime number detection
- *  - Even/Odd detection
- *  - Palindrome detection
- *  - Armstrong number detection - number is equal to sum of its digits raised to the power number of digits
- *  - Perfect number detection - number is equal to sum of all proper positive divisors of the number
- *  - Harshad number detection - number is evenly divisible by sum of its digits
- *  - Binary palindrome detection
- *  - Binary digit count (total, 1s, 0s)
+ * number_analyzer.c
+ *
+ * Entry point for the Number Analyzer program.
+ * Coordinates user input, number analysis modules, and terminal output.
  */
 #include <stdio.h> // for fgets, printf, snprintf functions
 #include <stdlib.h> // for strtoul, system functions

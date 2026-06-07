@@ -5,13 +5,71 @@ A collection of terminal-based C programs built while learning the C programming
 ## Programs
 
 ### Prime Generator
-Prints all prime numbers up to a user-provided number.
+Generates and displays all prime numbers up to a user-specified number.
+
+#### Features
+
+- Validates user input before processing
+- Generates prime numbers up to a given number
+- Displays the total number of primes found
+- Displays all prime numbers generated
+
+#### Concepts Practiced
+
+- Arrays
+- Input validation
+- Loop optimization
+- Function decomposition
+- Prime number algorithms
+- Time complexity considerations
+
 
 ### Number Analyzer
-Analyzes a number and displays mathematical, logical and binary properties of the number provided from user
+Analyzes a user-provided number and displays its mathematical, logical and binary properties.
+
+#### Features
+- Calculates digit count
+- Calculates digit sum
+- Detects prime numbers
+- Detects even and odd numbers
+- Detects palindrome
+- Detects armstrong numbers
+- Detects perfect numbers
+- Detects harshad numbers
+- Displays binary notation
+- Detects binary palindrome
+- Calculates binary digit counts (total, 1s, 0s)
+
+#### Concepts Practiced
+
+- Module architecture (`digits`, `binary`, `number_properties`, `tui`)
+- Header and source separation
+- Reusable modules
+- Makefiles
+- Input validation and error handling
+- Terminal-based user interfaces
+- Number property algorithms
+- Binary representation
+
+
+### Binary Explorer (WIP)
+Interactive program to perform represent and perform operations on binary of user-provided number.
+
+#### Features
+- Showing number information
+	- Decimal representation
+	- Binary representation
+	- Hexadecimal representation
+	- Octal representation
+- Setting bit
+- Clearing bit
+- Toggling bit
+- Checking bit
+- Shifting bits
+- Comparing 2 binary numbers
 
 ### Calculator (WIP)
-Interactive calculator to perform mathematical operations through a menu-driven interface
+Interactive calculator to perform mathematical operations through a menu-driven interface.
 
 ---
 
@@ -22,13 +80,13 @@ shell-c/
 ├─ compile_flags.txt
 ├─ README.md
 ├─ include/     # Public header files
-	└─ foo.h
+│	└─ foo.h
 ├─ src/         # Reusable implementation files
-	└─ foo.c
+│	└─ foo.c
 ├─ programs/    # Program entry points (contains main())
-	└─ bar.c
+│	└─ bar.c
 ├─ bin/         # Compiled executables
-	└─ .gitkeep
+│	└─ .gitkeep
 ```
 
 ---

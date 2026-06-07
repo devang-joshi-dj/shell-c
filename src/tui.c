@@ -1,3 +1,8 @@
+/**
+ * tui.c
+ *
+ * Terminal user interface helpers and formatting.
+ */
 #include <stdio.h> // for printf, snprintf functions
 #include <string.h> // for strlen function
 #include "tui.h"

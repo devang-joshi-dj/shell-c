@@ -1,3 +1,8 @@
+/**
+ * binary.c
+ *
+ * Binary representation and bit analysis utilities.
+ */
 #include <string.h> // for strlen function
 #include <stddef.h> // for size_t type
 #include <stdbool.h> // for bool type

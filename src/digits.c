@@ -1,3 +1,8 @@
+/**
+ * digits.c
+ *
+ * Operations related to decimal digits
+ */
 #include <stddef.h> // for size_t type
 #include "digits.h"
 

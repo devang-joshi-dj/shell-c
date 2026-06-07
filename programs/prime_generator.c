@@ -1,14 +1,8 @@
 /**
- * The program accepts highest value from user
- * and generates prime numbers from 2 to upto the provided number
- * Logic for efficiency to check a number for bieng a prime number
- *  - Divide the number with all the numbers equal to and smaller than itself upto 1 and only 2 divisions should be possible
- *  - OR
- *  - Numbers ending in 0, 2, 4, 6, or 8 are even and never prime (except 2).
- *  - Numbers ending in 5 are divisible by 5 and never prime (except 5).
- *  - If the sum of the digits is divisible by 3, the number is not prime.
- *  - Divide the number by all prime numbers (e.g., 7, 11, 13) that are less than sqrt of number.
- *  - If none of these divisions result in a whole number, the number is prime.
+ * prime_generator.c
+ *
+ * Entry point for the Prime Generator program.
+ * Handles user interaction and prime number generations.
  */
 #include <stdio.h> // for fflush, getchar, printf, scanf functions
 #include <stdlib.h> // for system function

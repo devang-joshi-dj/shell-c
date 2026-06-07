@@ -1,4 +1,11 @@
 /**
+ * calculator.c
+ *
+ * Entry point for the Calculator program.
+ * Provides an interactive menu-driven environment for
+ * performing calculations, analyzing results, and
+ * managing calculation history.
+ *
  * The program to perform mathematical operations through interactive menu
  * Menu includes operations -
  *  Addition, Subtraction, Multiplication, Division,
