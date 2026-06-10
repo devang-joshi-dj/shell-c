@@ -53,20 +53,31 @@ Analyzes a user-provided number and displays its mathematical, logical and binar
 
 
 ### Binary Explorer (WIP)
-Interactive program to perform represent and perform operations on binary of user-provided number.
+Interactive program for visualizing and manipulating the binary representation of a user-provided number.
 
 #### Features
 - Showing number information
-	- Decimal representation
+	- Signed Decimal representation
 	- Binary representation
 	- Hexadecimal representation
 	- Octal representation
+	- Number of set bits
+	- Number of clear bits
+	- Binary palindrome detection
+	- Bit position table
 - Setting bit
 - Clearing bit
 - Toggling bit
 - Checking bit
 - Shifting bits
-- Comparing 2 binary numbers
+- Counting total, set, unset bits,
+- Checking if the number is a power of two
+- Comparing 2 binary numbers and showing their following results
+	- Addition
+	- Subtraction
+	- AND
+	- OR
+	- XOR
 
 ### Calculator (WIP)
 Interactive calculator to perform mathematical operations through a menu-driven interface.

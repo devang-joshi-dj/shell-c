@@ -15,7 +15,7 @@ void draw_open_box_str(
 
 void draw_open_box_ulong(
 	const char *label,
-	const unsigned long int value,
+	const unsigned long value,
 	const int width
 );
 

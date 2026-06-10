@@ -9,7 +9,7 @@
 /**
  * Function to get count of digits of the given number
  */
-size_t get_digit_count(unsigned long int num) {
+size_t get_digit_count(unsigned long num) {
 	size_t digit_count = 0;
 
 	if (num == 0) digit_count++;
@@ -25,7 +25,7 @@ size_t get_digit_count(unsigned long int num) {
 /**
  * Function to get sum of all the digits of the given number
  */
-size_t get_digit_sum(unsigned long int num) {
+size_t get_digit_sum(unsigned long num) {
 	size_t sum = 0;
 
 	while (num != 0) {
@@ -41,6 +41,6 @@ size_t get_digit_sum(unsigned long int num) {
 /**
  * Function to return unit digit of given number
  */
-int get_unit_digit(const unsigned long int num) {
+int get_unit_digit(const unsigned long num) {
 	return num % 10;
 }

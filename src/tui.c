@@ -147,9 +147,9 @@ void draw_open_box_str(const char *label, const char *value, const int width) {
 }
 
 /**
- * Function to draw an open box with no up or bottom lines to show given label and unsigned long int value for the given width of the box
+ * Function to draw an open box with no up or bottom lines to show given label and unsigned long value for the given width of the box
  */
-void draw_open_box_ulong(const char *label, const unsigned long int value, const int width) {
+void draw_open_box_ulong(const char *label, const unsigned long value, const int width) {
 	char value_str[32];
 	snprintf(value_str, sizeof(value_str), "%lu", value);
 

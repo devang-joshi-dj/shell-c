@@ -36,7 +36,7 @@ all: $(PROGRAM_NAMES)
 
 number_analyzer:
 	$(CC) $(PROG)/number_analyzer.c \
-	$(SRC)/tui.c $(SRC)/digits.c $(SRC)/binary.c $(SRC)/number_properties.c \
+	$(SRC)/input.c $(SRC)/tui.c $(SRC)/digits.c $(SRC)/binary.c $(SRC)/number_properties.c \
 	$(COMMONFLAGS) -o $(BIN)/number_analyzer $(LDFLAGS)
 
 prime_generator:
