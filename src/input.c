@@ -13,7 +13,7 @@
 
 #include "tui.h" // for TUI functions
 
-#define INPUT_BUFFER_SIZE 32
+#define INPUT_BUFFER_SIZE 64
 
 /**
  * Function to accept user input, validate it, and return it
