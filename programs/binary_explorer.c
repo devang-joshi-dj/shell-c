@@ -19,7 +19,7 @@
 int show_operations_menu();
 
 int main() {
-	const unsigned long number = accept_unsigned_long("Reveal thy number for analysis");
+	const unsigned long number = accept_unsigned_long("Reveal thy number for analysis", FORMAT_WIDTH);
 	show_operations_menu();
 	return 0;
 }

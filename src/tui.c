@@ -10,6 +10,7 @@
 #define CORNER_CHAR_WIDTH 2
 #define PADDING_CHAR_WIDTH 2
 #define L_PADDING_CHAR_WIDTH 1
+#define ERROR_MSG_SIZE 256
 
 // static functions are private to this file, not global
 // for internal use only
@@ -114,7 +115,10 @@ void draw_header(const char *header, const int width) {
  * Function to draw a box with left aligned given error for the given width of the box
  */
 void draw_error(const char *message, int width) {
-	int message_len = (int)strlen(message);
+	char error_msg[ERROR_MSG_SIZE];
+	snprintf(error_msg, sizeof(error_msg), "ERROR: %s", message);
+
+	int message_len = (int)strlen(error_msg);
 
 	if (width < (message_len + CORNER_CHAR_WIDTH + PADDING_CHAR_WIDTH))
 		width = message_len + CORNER_CHAR_WIDTH + PADDING_CHAR_WIDTH; // increase width of the box if given width is smaller
@@ -123,7 +127,7 @@ void draw_error(const char *message, int width) {
 
 	draw_top_line(width);
 	printf("│ ");
-	printf("%s", message);
+	printf("%s", error_msg);
 	if (right_padding > 0) for (int i = 0; i < right_padding; i++) printf(" ");
 	printf(" │\n");
 	draw_box_bottom(width);

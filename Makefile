@@ -43,11 +43,20 @@ prime_generator:
 	$(CC) $(PROG)/prime_generator.c \
 	$(COMMONFLAGS) -o $(BIN)/prime_generator $(LDFLAGS)
 
+binary_explorer:
+	$(CC) $(PROG)/binary_explorer.c \
+	$(SRC)/input.c $(SRC)/tui.c \
+	$(COMMONFLAGS) -o $(BIN)/binary_explorer $(LDFLAGS)
+
+
 run-na: number_analyzer
 	./$(BIN)/number_analyzer
 
 run-pg: prime_generator
 	./$(BIN)/prime_generator
+
+run-be: binary_explorer
+	./$(BIN)/binary_explorer
 
 # Remove compiled binaries
 clean:
