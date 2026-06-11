@@ -45,7 +45,7 @@ prime_generator:
 
 binary_explorer:
 	$(CC) $(PROG)/binary_explorer.c \
-	$(SRC)/input.c $(SRC)/tui.c \
+	$(SRC)/input.c $(SRC)/tui.c $(SRC)/binary.c \
 	$(COMMONFLAGS) -o $(BIN)/binary_explorer $(LDFLAGS)
 
 

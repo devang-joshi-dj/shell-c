@@ -21,6 +21,15 @@ static void draw_top_line(const int width);
 static void draw_bottom_line(const int width);
 
 /**
+ * Function to draw double line separator for the given width
+ */
+void draw_double_line_separator(const int width) {
+	printf("\n");
+	if (width > 0) for (int i = 0; i < width; i++) printf("═");
+	printf("\n");
+}
+
+/**
  * Function to draw top line for title with symbols for the given width
  */
 void draw_top_title_line(const int width) {

@@ -57,7 +57,7 @@ Interactive program for visualizing and manipulating the binary representation o
 
 #### Features
 - Showing number information
-	- Signed Decimal representation
+	- Decimal representation
 	- Binary representation
 	- Hexadecimal representation
 	- Octal representation

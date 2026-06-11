@@ -4,6 +4,7 @@
 #include <stddef.h> // for size_t type
 #include <stdbool.h> // for bool type
 
+void draw_double_line_separator(const int width);
 void draw_title(const char *title, const int width);
 void draw_header(const char *header, const int width);
 void draw_error(const char *message, int width);
