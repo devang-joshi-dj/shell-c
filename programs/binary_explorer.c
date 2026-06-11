@@ -19,13 +19,15 @@
 
 #define MENU_ITEMS 10
 #define ULONG_BITS (sizeof(unsigned long) * CHAR_BIT)
-#define BINARY_LEN (ULONG_BITS + 1)
-#define HEX_LEN (ULONG_BITS / 4 + 1)
-#define OCTAL_LEN ((ULONG_BITS + 2) / 3 + 1)
+#define BINARY_LEN (ULONG_BITS + 1) // +1 for \0
+#define HEX_LEN (ULONG_BITS / 4 + 3) // +3 for \0, 0, x
+#define OCTAL_LEN ((ULONG_BITS + 2) / 3 + 2) // +2 for \0, 0
 
 typedef struct {
 	unsigned long value;
 	char binary[BINARY_LEN];
+	char hex[HEX_LEN];
+	char octal[OCTAL_LEN];
 } NumberSnapshot;
 
 void clear_screen();
@@ -99,6 +101,8 @@ bool perform_operations(const unsigned long num) {
 
 	NumberSnapshot original = {.value = num};
 	number_to_binary(num, original.binary, sizeof(original.binary));
+	number_to_hex(num, original.hex, sizeof(original.hex));
+	number_to_octal(num, original.octal, sizeof(original.octal));
 
 	draw_title("BINARY EXPLORER", FORMAT_WIDTH);
 	show_basic_num_info(&original);
@@ -147,17 +151,22 @@ bool perform_operations(const unsigned long num) {
 }
 
 void show_basic_num_info(NumberSnapshot *original) {
-	char hexadecimal[HEX_LEN];
-	char octal[OCTAL_LEN];
-
 	printf("Current Number\n\n");
+
 	printf("Decimal : %lu\n", original->value);
 	printf("Binary  : %s\n", original->binary);
-	printf("Hex     : %s\n", hexadecimal);
-	printf("Octal   : %s\n", octal);
+	printf("Hex     : %s\n", original->hex);
+	printf("Octal   : %s\n", original->octal);
 }
 void show_num_info(NumberSnapshot *original) {
-	show_basic_num_info(original);
+	printf("Decimal : %lu\n", original->value);
+	printf("Binary  : %s\n", original->binary);
+	printf("Hex     : %s\n", original->hex);
+	printf("Octal   : %s\n\n", original->octal);
+
+	printf("Set Bits  :");
+	printf("Clear Bits  :");
+	printf("Total Bits  :");
 
 }
 void set_bit(NumberSnapshot *original) {

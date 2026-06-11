@@ -25,7 +25,7 @@ void number_to_binary(long unsigned int num, char *buffer, size_t size) {
 	} else {
 		size_t write_index = 0;
 
-		// loop until num is 0 or buffer is written upto size - 1 characters
+		// loop until num is 0 or buffer is written upto (size - 1) characters
 		// 1 bit reserved for null terminator
 		while (num != 0 && write_index < size - 1) {
 			buffer[write_index] = (num % 2) + '0'; // converting integer digit to ASCII character digit
@@ -84,4 +84,79 @@ BinaryInfo get_binary_analysis(const char *binary) {
 	}
 
 	return binary_info;
+}
+
+/**
+ * Function to write hex value of the given number in the buffer
+ * int num - number to be converted to hex
+ * char* buffer - pointer to character array to write into
+ * size_t - maximum safe size of buffer to be written into
+ */
+void number_to_hex(long unsigned int num, char *buffer, size_t size) {
+	if (size == 0) return;
+	if (num == 0) {
+		if (size > 1) {
+			buffer[0] = '0';
+			buffer[1] = '\0';
+		}
+	} else {
+		size_t write_index = 0;
+		const int UNALLOWED_VALUES_FROM = 10;
+
+		// loop until num is 0 or buffer is written upto (size - 1) characters
+		// 1 bit reserved for null terminator
+		while (num != 0 && write_index < size - 1) {
+			int remainder = (num % 16);
+			buffer[write_index] = remainder + (remainder >= UNALLOWED_VALUES_FROM ? ('A' - UNALLOWED_VALUES_FROM) : '0'); // converting integer digit to ASCII character digit
+			num /= 16; // repeatedly dividing by 2 extracts hex digits from least significant bit
+			write_index++;
+		}
+		buffer[write_index] = 'x';
+		buffer[write_index+1] = '0';
+		buffer[write_index+2] = '\0';
+
+		// write_index has become now the length of buffer
+		// reversing string to form correct hex code
+		for (size_t i = 0; i < ((write_index+2) / 2); i++) {
+			char temp = buffer[i];
+			buffer[i] = buffer[(write_index+2)-i-1];
+			buffer[(write_index+2)-i-1] = temp;
+		}
+	}
+}
+
+/**
+ * Function to write octal value of the given number in the buffer
+ * int num - number to be converted to octal
+ * char* buffer - pointer to character array to write into
+ * size_t - maximum safe size of buffer to be written into
+ */
+void number_to_octal(long unsigned int num, char *buffer, size_t size) {
+	if (size == 0) return;
+	if (num == 0) {
+		if (size > 1) {
+			buffer[0] = '0';
+			buffer[1] = '\0';
+		}
+	} else {
+		size_t write_index = 0;
+
+		// loop until num is 0 or buffer is written upto (size - 1) characters
+		// 1 bit reserved for null terminator
+		while (num != 0 && write_index < size - 1) {
+			buffer[write_index] = (num % 8) + '0'; // converting integer digit to ASCII character digit
+			num /= 8; // repeatedly dividing by 2 extracts octal digits from least significant bit
+			write_index++;
+		}
+		buffer[write_index] = '0';
+		buffer[write_index+1] = '\0';
+
+		// write_index has become now the length of buffer
+		// reversing string to form correct octal code
+		for (size_t i = 0; i < ((write_index+1) / 2); i++) {
+			char temp = buffer[i];
+			buffer[i] = buffer[(write_index+1)-i-1];
+			buffer[(write_index+1)-i-1] = temp;
+		}
+	}
 }
