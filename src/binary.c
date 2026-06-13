@@ -3,6 +3,7 @@
  *
  * Binary representation and bit analysis utilities.
  */
+#include <stdio.h> // for printf functions
 #include <string.h> // for strlen function
 #include <stddef.h> // for size_t type
 #include <stdbool.h> // for bool type
@@ -159,4 +160,57 @@ void number_to_octal(long unsigned int num, char *buffer, size_t size) {
 			buffer[(write_index+1)-i-1] = temp;
 		}
 	}
+}
+
+/**
+ * Function to check if provided binary value is power of 2
+ */
+bool is_binary_pow_of_2(char *binary) {
+	size_t binary_len = strlen(binary);
+
+	if (binary_len > 1 && binary[0] == '1') {
+		for (size_t i = 1; i < binary_len; i++) {
+			if (binary[i] == '1') return false;
+		}
+	} else return false;
+
+	return true;
+}
+
+/**
+ * Function to draw a table for representing positions of each bit of binary
+ */
+void display_bit_layout(char *binary) {
+	size_t binary_len = strlen(binary);
+	size_t cols = 8;
+	size_t rows = (binary_len + (cols-1)) / cols; // +(cols-1) to ciel the binary_len to be divided by cols
+
+	for (size_t i = 0; i < rows; i++) {
+		size_t loop_until = binary_len - (i * cols);
+
+		if (loop_until > cols) loop_until = cols;
+
+		printf("Bit   : ");
+		for (size_t j = 0; j < loop_until; j++) printf("%zu ", binary_len - (i * cols) - j - 1);
+		printf("\n");
+
+		printf("Value : ");
+		for (size_t j = 0; j < loop_until; j++) {
+			size_t bit_val = binary_len - (i * cols) - j - 1;
+
+			printf(
+			 	bit_val > 99 ? " %c  " : bit_val > 9 ? " %c " : "%c ",
+				binary[(i * cols) + j]
+			);
+		}
+		printf("\n\n");
+	}
+
+	/*for (size_t i = 0; i < (binary_len*4+1); i++) printf("─");
+	printf("\n│");
+	for (size_t i = 0; i < binary_len; i++) printf(" %zu │", binary_len - i - 1);
+	printf("\n│");
+	for (size_t i = 0; i < binary_len; i++) printf(" %c │", binary[i]);
+	printf("\n");
+	for (size_t i = 0; i < (binary_len*4+1); i++) printf("─");*/
 }

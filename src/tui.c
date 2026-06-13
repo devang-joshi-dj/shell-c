@@ -5,6 +5,8 @@
  */
 #include <stdio.h> // for printf, snprintf functions
 #include <string.h> // for strlen function
+
+#include "input.h" // for INPUT_BUFFER_SIZE
 #include "tui.h"
 
 #define CORNER_CHAR_WIDTH 2
@@ -163,7 +165,7 @@ void draw_open_box_str(const char *label, const char *value, const int width) {
  * Function to draw an open box with no up or bottom lines to show given label and unsigned long value for the given width of the box
  */
 void draw_open_box_ulong(const char *label, const unsigned long value, const int width) {
-	char value_str[32];
+	char value_str[INPUT_BUFFER_SIZE];
 	snprintf(value_str, sizeof(value_str), "%lu", value);
 
 	draw_open_box_str(label, value_str, width);
@@ -184,7 +186,7 @@ void draw_open_box_ulong(const char *label, const unsigned long value, const int
  * Function to draw an open box with no up or bottom lines to show given label and size_t value for the given width of the box
  */
 void draw_open_box_size_t(const char *label, const size_t value, const int width) {
-	char value_str[32];
+	char value_str[INPUT_BUFFER_SIZE];
 	snprintf(value_str, sizeof(value_str), "%zu", value);
 
 	draw_open_box_str(label, value_str, width);

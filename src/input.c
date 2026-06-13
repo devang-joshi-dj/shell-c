@@ -12,8 +12,7 @@
 #include <stddef.h> // for NULL, size_t type
 
 #include "tui.h" // for TUI functions
-
-#define INPUT_BUFFER_SIZE 64 + 2 // +2 for \n & \0
+#include "input.h"
 
 /**
  * Function to accept user input, validate it, and return it

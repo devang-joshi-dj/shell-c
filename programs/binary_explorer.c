@@ -94,6 +94,9 @@ void show_operations_menu() {
 
 }
 
+/**
+ * Function to keep accepting input for performing operation on given number until user exits
+ */
 bool perform_operations(const unsigned long num) {
 	bool accepting_operation = true;
 	bool perform_new_operation = false;
@@ -150,6 +153,9 @@ bool perform_operations(const unsigned long num) {
 	return perform_new_operation;
 }
 
+/**
+ * Function to show basic information of the number at the start of the program
+ */
 void show_basic_num_info(NumberSnapshot *original) {
 	printf("Current Number\n\n");
 
@@ -158,17 +164,29 @@ void show_basic_num_info(NumberSnapshot *original) {
 	printf("Hex     : %s\n", original->hex);
 	printf("Octal   : %s\n", original->octal);
 }
+
+/**
+ * Function to show detailed information of the number
+ */
 void show_num_info(NumberSnapshot *original) {
+	BinaryInfo binary_info = get_binary_analysis(original->binary);
 	printf("Decimal : %lu\n", original->value);
 	printf("Binary  : %s\n", original->binary);
 	printf("Hex     : %s\n", original->hex);
 	printf("Octal   : %s\n\n", original->octal);
 
-	printf("Set Bits  :");
-	printf("Clear Bits  :");
-	printf("Total Bits  :");
+	printf("Set Bits     : %zu\n", binary_info.ones_count);
+	printf("Clear Bits   : %zu\n", binary_info.zeros_count);
+	printf("Total Bits   : %zu\n\n", binary_info.total_bits_used);
 
+	printf("Power Of Two : %s\n", is_binary_pow_of_2(original->binary) ? "YES" : "NO");
+	printf("Palindrome   : %s\n", binary_info.is_binary_palindrome ? "YES" : "NO");
+	printf("Parity       : %s\n\n", binary_info.ones_count % 2 ? "ODD" : "EVEN");
+
+	printf("Bit Layout\n\n");
+	display_bit_layout(original->binary);
 }
+
 void set_bit(NumberSnapshot *original) {
 
 }

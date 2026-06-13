@@ -64,7 +64,7 @@ Interactive program for visualizing and manipulating the binary representation o
 	- Number of set bits
 	- Number of clear bits
 	- Binary palindrome detection
-	- Bit position table
+	- Bit layout
 - Setting bit
 - Clearing bit
 - Toggling bit
