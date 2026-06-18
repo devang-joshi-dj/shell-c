@@ -8,6 +8,7 @@
 #include <stdio.h> // for printf functions
 #include <stdbool.h> // for bool type
 #include <limits.h> // for CHAR_BIT
+#include <string.h> // for strlen functions
 
 #include "input.h" // for accept_unsigned_long function
 #include "binary.h" // for binary functions, BinaryInfo struct
@@ -17,7 +18,7 @@
 // Note: extremely large values may not fit in all views
 #define FORMAT_WIDTH 64
 
-#define MENU_ITEMS 10
+#define MENU_ITEMS 9
 #define ULONG_BITS (sizeof(unsigned long) * CHAR_BIT)
 #define BINARY_LEN (ULONG_BITS + 1) // +1 for \0
 #define HEX_LEN (ULONG_BITS / 4 + 3) // +3 for \0, 0, x
@@ -30,15 +31,19 @@ typedef struct {
 	char octal[OCTAL_LEN];
 } NumberSnapshot;
 
+typedef enum {
+	BIT_CLEAR,
+	BIT_SET,
+	BIT_TOGGLE
+} BitOperation;
+
 void clear_screen();
 void show_operations_menu();
 bool perform_operations(const unsigned long num);
 
 void show_basic_num_info(NumberSnapshot *original);
 void show_num_info(NumberSnapshot *original);
-void set_bit(NumberSnapshot *original);
-void clear_bit(NumberSnapshot *original);
-void toggle_bit(NumberSnapshot *original);
+void modify_bit(NumberSnapshot *original, BitOperation operation);
 void check_bit(NumberSnapshot *original);
 void left_shift(NumberSnapshot *original);
 void right_shift(NumberSnapshot *original);
@@ -74,7 +79,7 @@ void clear_screen() {
  * Function to show operations menu to user and accept input, validate it, return it
  */
 void show_operations_menu() {
-	char menu[MENU_ITEMS][MENU_ITEMS*3] = {
+	char menu[MENU_ITEMS][MENU_ITEMS*4] = {
 		"Show Number Information",
 		"Set a Bit",
 		"Clear a Bit",
@@ -84,13 +89,15 @@ void show_operations_menu() {
 		"Shift Right",
 		"Compare With Another Number",
 		"Enter New Number",
-		"Exit",
 	};
+
+	draw_double_line_separator(FORMAT_WIDTH);
 
 	printf("\n");
 	for (int i = 0; i < MENU_ITEMS; i++) {
 		printf("%d. %s\n", i+1, menu[i]);
 	}
+	printf("0. Exit\n\n");
 
 }
 
@@ -110,23 +117,26 @@ bool perform_operations(const unsigned long num) {
 	draw_title("BINARY EXPLORER", FORMAT_WIDTH);
 	show_basic_num_info(&original);
 
-	draw_double_line_separator(FORMAT_WIDTH);
-
 	while (accepting_operation) {
 		show_operations_menu();
-		const int selected_option = accept_menu_option("Please choose from the menu above to select an operation", MENU_ITEMS, FORMAT_WIDTH);
+		// const int selected_option = accept_menu_option("Please choose from the menu above to select an operation", MENU_ITEMS, FORMAT_WIDTH);
+		const int selected_option = accept_menu_option("Choice", MENU_ITEMS, FORMAT_WIDTH);
+
+		draw_single_line_separator(FORMAT_WIDTH);
+		printf("\n");
+
 		switch (selected_option) {
 			case 1:
 				show_num_info(&original);
 				break;
 			case 2:
-				set_bit(&original);
+				modify_bit(&original, BIT_SET);
 				break;
 			case 3:
-				clear_bit(&original);
+				modify_bit(&original, BIT_CLEAR);
 				break;
 			case 4:
-				toggle_bit(&original);
+				modify_bit(&original, BIT_TOGGLE);
 				break;
 			case 5:
 				check_bit(&original);
@@ -144,7 +154,7 @@ bool perform_operations(const unsigned long num) {
 				perform_new_operation = true;
 				accepting_operation = false;
 				break;
-			case 10:
+			case 0:
 				accepting_operation = false;
 				break;
 		}
@@ -187,13 +197,38 @@ void show_num_info(NumberSnapshot *original) {
 	display_bit_layout(original->binary);
 }
 
-void set_bit(NumberSnapshot *original) {
+/**
+ * Function to modify a binary number's bit and display newly generated decimal after binary bit modification
+ */
+void modify_bit(NumberSnapshot *original, BitOperation operation) {
+	printf("Current Number : ");
+	printf("%lu = %s\n\n", original->value, original->binary);
 
-}
-void clear_bit(NumberSnapshot *original) {
+	const int selected_option = accept_menu_option("Enter bit position to set", strlen(original->binary)-1, FORMAT_WIDTH);
 
-}
-void toggle_bit(NumberSnapshot *original) {
+	char new_binary[BINARY_LEN];
+	strcpy(new_binary, original->binary);
+
+	if (operation == BIT_TOGGLE) {
+		new_binary[strlen(original->binary) - selected_option - 1] =
+			new_binary[strlen(original->binary) - selected_option - 1] == '1' ? '0' : '1';
+	} else {
+		new_binary[strlen(original->binary) - selected_option - 1] = operation + '0';
+	}
+
+	unsigned long new_value = binary_to_decimal(new_binary);
+
+
+	printf(
+		"\nOperation: %s %i\n\n",
+		operation == BIT_TOGGLE ? "TOGGLE BIT" : operation == BIT_SET ? "SET BIT" : "CLEAR BIT",
+		selected_option
+	);
+
+	printf("Before : %s\n", original->binary);
+	printf("After  : %s\n\n", new_binary);
+
+	printf("Decimal Result : %lu\n", new_value);
 
 }
 void check_bit(NumberSnapshot *original) {

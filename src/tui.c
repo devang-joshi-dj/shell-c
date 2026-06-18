@@ -23,6 +23,15 @@ static void draw_top_line(const int width);
 static void draw_bottom_line(const int width);
 
 /**
+ * Function to draw single line separator for the given width
+ */
+void draw_single_line_separator(const int width) {
+	printf("\n");
+	if (width > 0) for (int i = 0; i < width; i++) printf("─");
+	printf("\n");
+}
+
+/**
  * Function to draw double line separator for the given width
  */
 void draw_double_line_separator(const int width) {
@@ -123,7 +132,7 @@ void draw_header(const char *header, const int width) {
 }
 
 /**
- * Function to draw a box with left aligned given error for the given width of the box
+ * Function to draw a box with left aligned given error and given width of the box
  */
 void draw_error(const char *message, int width) {
 	char error_msg[ERROR_MSG_SIZE];
@@ -141,6 +150,40 @@ void draw_error(const char *message, int width) {
 	printf("%s", error_msg);
 	if (right_padding > 0) for (int i = 0; i < right_padding; i++) printf(" ");
 	printf(" │\n");
+	draw_box_bottom(width);
+}
+
+/**
+ * Function to draw a box with left aligned given error, range and given width of the box
+ */
+void draw_range_error(const char *message, int min_range, int max_range, int width) {
+	char error_msg[ERROR_MSG_SIZE];
+	char valid_range_msg[ERROR_MSG_SIZE];
+	snprintf(error_msg, sizeof(error_msg), "ERROR: %s", message);
+	snprintf(valid_range_msg, sizeof(valid_range_msg), "Valid range: %d-%d", min_range, max_range);
+
+	int error_message_len = (int)strlen(error_msg);
+	int range_message_len = (int)strlen(valid_range_msg);
+
+	if (width < (error_message_len + CORNER_CHAR_WIDTH + PADDING_CHAR_WIDTH))
+		width = error_message_len + CORNER_CHAR_WIDTH + PADDING_CHAR_WIDTH; // increase width of the box if given width is smaller
+	if (width < (range_message_len + CORNER_CHAR_WIDTH + PADDING_CHAR_WIDTH))
+		width = range_message_len + CORNER_CHAR_WIDTH + PADDING_CHAR_WIDTH; // increase width of the box if given width is smaller
+
+	int error_right_padding = width - error_message_len - CORNER_CHAR_WIDTH - PADDING_CHAR_WIDTH;
+	int range_right_padding = width - range_message_len - CORNER_CHAR_WIDTH - PADDING_CHAR_WIDTH;
+
+	draw_top_line(width);
+	printf("│ ");
+	printf("%s", error_msg);
+	if (error_right_padding > 0) for (int i = 0; i < error_right_padding; i++) printf(" ");
+	printf(" │\n");
+
+	printf("│ ");
+	printf("%s", valid_range_msg);
+	if (range_right_padding > 0) for (int i = 0; i < range_right_padding; i++) printf(" ");
+	printf(" │\n");
+
 	draw_box_bottom(width);
 }
 

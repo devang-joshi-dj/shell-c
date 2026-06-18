@@ -7,6 +7,7 @@
 #include <string.h> // for strlen function
 #include <stddef.h> // for size_t type
 #include <stdbool.h> // for bool type
+#include <math.h> // for pow function
 #include "binary.h"
 
 
@@ -213,4 +214,21 @@ void display_bit_layout(char *binary) {
 	for (size_t i = 0; i < binary_len; i++) printf(" %c │", binary[i]);
 	printf("\n");
 	for (size_t i = 0; i < (binary_len*4+1); i++) printf("─");*/
+}
+
+/**
+ * Function to return decimal value for provided binary value
+ */
+unsigned long binary_to_decimal(char *binary) {
+	size_t binary_len = strlen(binary);
+	unsigned long binary_decimal = 0;
+
+	for (size_t i = 0; i < binary_len; i++) {
+
+		if (binary[binary_len - i - 1] == '1') {
+			binary_decimal += (unsigned long)round(pow(2, i));
+		}
+	}
+
+	return binary_decimal;
 }

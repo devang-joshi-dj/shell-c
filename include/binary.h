@@ -18,5 +18,6 @@ void number_to_hex(long unsigned int num, char *buffer, size_t size);
 void number_to_octal(long unsigned int num, char *buffer, size_t size);
 bool is_binary_pow_of_2(char *binary);
 void display_bit_layout(char *binary);
+unsigned long binary_to_decimal(char *binary);
 
 #endif

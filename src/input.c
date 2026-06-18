@@ -105,7 +105,7 @@ unsigned long accept_unsigned_long(const char *prompt, const int FORMAT_WIDTH) {
 /**
  * Function to accept user input, validate it, and return it for user menu option
  */
-unsigned int accept_menu_option(const char *prompt, const unsigned int max_options, const int FORMAT_WIDTH) {
+unsigned int accept_menu_option(const char *prompt, const size_t max_options, const int FORMAT_WIDTH) {
 	char input[INPUT_BUFFER_SIZE]; // stores raw text entered by the user
 	unsigned int value; // stores the converted number
 	int is_value_allowed; // flag to control the loop
@@ -181,8 +181,9 @@ unsigned int accept_menu_option(const char *prompt, const unsigned int max_optio
 					} else if (*endptr != '\n' && *endptr != '\0') { // check for invalid characters
 						draw_error("Please provide a valid number", FORMAT_WIDTH);
 						is_value_allowed = false; // resetting the value to repeat
-					} else if (!value ||value > max_options) {
-						draw_error("Please select a valid option from the menu", FORMAT_WIDTH);
+					} else if (value > max_options) {
+						// draw_error("Please select a valid option from the menu", FORMAT_WIDTH);
+						draw_range_error("Invalid value", 0, max_options, FORMAT_WIDTH);
 						is_value_allowed = false; // resetting the value to repeat
 					}
 				}
