@@ -193,3 +193,17 @@ unsigned int accept_menu_option(const char *prompt, const size_t max_options, co
 
 	return value;
 }
+
+/**
+ * Waits for the user to press Enter before continuing.
+ *
+ * Discards all characters from the current input line until
+ * a newline character or EOF is encountered
+ */
+void wait_for_enter(void) {
+	int ch;
+
+	printf("Press ENTER to continue...");
+
+	while((ch = getchar()) != '\n' && ch != EOF);
+}

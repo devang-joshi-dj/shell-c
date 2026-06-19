@@ -11,5 +11,6 @@ unsigned int accept_menu_option(
 	const size_t max_options,
 	const int FORMAT_WIDTH
 );
+void wait_for_enter(void);
 
 #endif

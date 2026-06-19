@@ -158,6 +158,8 @@ void perform_operations(const unsigned long num) {
 				exit_program();
 				break;
 		}
+
+		wait_for_enter();
 	}
 }
 
@@ -266,6 +268,7 @@ void compare_with_2nd_number(NumberSnapshot *original) {
 }
 
 void exit_program() {
-	printf("Program completed successfully.\n");
+	printf("Thank you for using Binary Explorer.\n");
+	printf("Goodbye!\n");
 	exit(EXIT_SUCCESS);
 }
