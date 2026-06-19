@@ -204,7 +204,7 @@ void display_bit_layout(char *binary) {
 				binary[(i * cols) + j]
 			);
 		}
-		printf("\n\n");
+		printf("\n");
 	}
 
 	/*for (size_t i = 0; i < (binary_len*4+1); i++) printf("─");

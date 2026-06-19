@@ -5,13 +5,14 @@
  * Provides an interactive environment for exploring
  * binary representation and bit-level operations.
  */
-#include <stdio.h> // for printf functions
-#include <stdlib.h> // for exit functions
+#include <stdio.h> // for fflush, printf functions
+#include <stdlib.h> // for EXIT_SUCCESS, abs, exit functions
 #include <stdbool.h> // for bool type
 #include <limits.h> // for CHAR_BIT
-#include <string.h> // for strlen functions
+#include <stddef.h> // for size_t type
+#include <string.h> // for strcpy, strlen functions
 
-#include "input.h" // for accept_unsigned_long function
+#include "input.h" // for input functions
 #include "binary.h" // for binary functions, BinaryInfo struct
 #include "tui.h" // for TUI functions
 
@@ -38,6 +39,11 @@ typedef enum {
 	BIT_TOGGLE
 } BitOperation;
 
+typedef enum {
+	SHIFT_LEFT,
+	SHIFT_RIGHT
+} ShiftDirection;
+
 void clear_screen();
 void show_operations_menu();
 void perform_operations(const unsigned long num);
@@ -47,8 +53,7 @@ void show_basic_num_info(NumberSnapshot *original);
 void show_num_info(NumberSnapshot *original);
 void modify_bit(NumberSnapshot *original, BitOperation operation);
 void check_bit(NumberSnapshot *original);
-void left_shift(NumberSnapshot *original);
-void right_shift(NumberSnapshot *original);
+void shift_bits(NumberSnapshot *original, ShiftDirection direction);
 void compare_with_2nd_number(NumberSnapshot *original);
 void exit_program();
 
@@ -142,10 +147,10 @@ void perform_operations(const unsigned long num) {
 				check_bit(&original);
 				break;
 			case 6:
-				left_shift(&original);
+				shift_bits(&original, SHIFT_LEFT);
 				break;
 			case 7:
-				right_shift(&original);
+				shift_bits(&original, SHIFT_RIGHT);
 				break;
 			case 8:
 				compare_with_2nd_number(&original);
@@ -232,7 +237,7 @@ void modify_bit(NumberSnapshot *original, BitOperation operation) {
 
 
 	printf(
-		"\nOperation: %s BIT %i\n\n",
+		"\nOperation: %s BIT %d\n\n",
 		operation == BIT_TOGGLE ? "TOGGLE" : operation == BIT_SET ? "SET" : "CLEAR",
 		selected_bit
 	);
@@ -257,12 +262,40 @@ void check_bit(NumberSnapshot *original) {
 	printf("Result : %s\n", original->binary[selected_bit] == '1' ? "SET" : "CLEAR");
 }
 
-void left_shift(NumberSnapshot *original) {
+/**
+ * Function to shift the bits of the given number by user provided amount
+ */
+void shift_bits(NumberSnapshot *original, ShiftDirection direction) {
+	display_current_num_binary(original);
 
-}
-void right_shift(NumberSnapshot *original) {
+	const unsigned long shift_amount = accept_unsigned_long("Enter shift amount", FORMAT_WIDTH);
 
+	const int new_value = direction == SHIFT_LEFT ?
+		original->value << shift_amount :
+		original->value >> shift_amount;
+
+	char new_binary[BINARY_LEN];
+	number_to_binary(new_value, new_binary, sizeof(new_binary));
+
+	int binary_len_diff = strlen(original->binary) - strlen(new_binary);
+	char prepend_bits[BINARY_LEN];
+
+	if (binary_len_diff) {
+		int write_index;
+		for (write_index = 0; write_index < abs(binary_len_diff); write_index++) {
+			prepend_bits[write_index] = '0';
+		}
+		prepend_bits[write_index] = '\0';
+	}
+
+	printf("\nOperation: SHIFT %s %lu\n\n", direction == SHIFT_LEFT ? "LEFT" : "RIGHT" , shift_amount);
+
+	printf("Before : %s%s\n", binary_len_diff < 0 ? prepend_bits : "", original->binary);
+	printf("After  : %s%s\n\n", binary_len_diff > 0 ? prepend_bits : "", new_binary);
+
+	printf("Decimal Result : %d\n", new_value);
 }
+
 void compare_with_2nd_number(NumberSnapshot *original) {
 
 }

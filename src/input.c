@@ -15,7 +15,7 @@
 #include "input.h"
 
 /**
- * Function to accept user input, validate it, and return it
+ * Function to accept user input as unsigned long int, validate it, and return it
  */
 unsigned long accept_unsigned_long(const char *prompt, const int FORMAT_WIDTH) {
 	char input[INPUT_BUFFER_SIZE]; // stores raw text entered by the user
@@ -203,7 +203,7 @@ unsigned int accept_menu_option(const char *prompt, const size_t max_options, co
 void wait_for_enter(void) {
 	int ch;
 
-	printf("Press ENTER to continue...");
+	printf("\nPress ENTER to continue...");
 
 	while((ch = getchar()) != '\n' && ch != EOF);
 }
