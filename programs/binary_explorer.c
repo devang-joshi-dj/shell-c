@@ -6,7 +6,7 @@
  * binary representation and bit-level operations.
  */
 #include <stdio.h> // for fflush, printf functions
-#include <stdlib.h> // for EXIT_SUCCESS, abs, exit functions
+#include <stdlib.h> // for EXIT_SUCCESS, abs, labs, exit functions
 #include <stdbool.h> // for bool type
 #include <limits.h> // for CHAR_BIT
 #include <stddef.h> // for size_t type
@@ -312,7 +312,7 @@ void compare_with_2nd_number(NumberSnapshot *original) {
 
 	number_to_binary(new_value, new_binary, sizeof(new_binary));
 	number_to_binary(add_value, add_binary, sizeof(add_binary));
-	number_to_binary(diff_value, diff_binary, sizeof(diff_binary));
+	number_to_binary(labs(diff_value), diff_binary, sizeof(diff_binary));
 	number_to_binary(and_value, and_binary, sizeof(and_binary));
 	number_to_binary(or_value, or_binary, sizeof(or_binary));
 	number_to_binary(xor_value, xor_binary, sizeof(xor_binary));
@@ -321,8 +321,14 @@ void compare_with_2nd_number(NumberSnapshot *original) {
 	printf("Result: %lu\n", add_value);
 	draw_single_line_separator(FORMAT_WIDTH);
 
-	display_binary_operation("Subtraction", original->binary, new_binary, diff_binary);
-	printf("Result: %lu\n", diff_value);
+	if (diff_value < 0) {
+		display_binary_operation("Subtraction", original->binary, new_binary, "");
+		printf("Result: %ld\n\n", diff_value);
+		printf("Magnitude: %s\n", diff_binary);
+	} else {
+		display_binary_operation("Subtraction", original->binary, new_binary, diff_binary);
+		printf("Result: %lu\n", diff_value);
+	}
 	draw_single_line_separator(FORMAT_WIDTH);
 
 	display_binary_operation("AND", original->binary, new_binary, and_binary);
@@ -357,10 +363,10 @@ void display_binary_operation(const char *operation, const char *top, const char
 
 	printf("\n%s\n\n", operation);
 
-	printf("%s%s\n", top_prepend_bits, top);
-	printf("%s%s", bottom_prepend_bits, bottom);
+	if (top_len) printf("%s%s\n", top_prepend_bits, top);
+	if (bottom_len) printf("%s%s", bottom_prepend_bits, bottom);
 	draw_single_line_separator(max_len);
-	printf("%s%s\n\n", result_prepend_bits, result);
+	if (result_len) printf("%s%s\n\n", result_prepend_bits, result);
 }
 
 /**
