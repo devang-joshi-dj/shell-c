@@ -17,7 +17,7 @@
  * char* buffer - pointer to character array to write into
  * size_t - maximum safe size of buffer to be written into
  */
-void number_to_binary(long unsigned int num, char *buffer, size_t size) {
+void number_to_binary(unsigned long num, char *buffer, size_t size) {
 	if (size == 0) return;
 	if (num == 0) {
 		if (size > 1) {
@@ -94,7 +94,7 @@ BinaryInfo get_binary_analysis(const char *binary) {
  * char* buffer - pointer to character array to write into
  * size_t - maximum safe size of buffer to be written into
  */
-void number_to_hex(long unsigned int num, char *buffer, size_t size) {
+void number_to_hex(unsigned long num, char *buffer, size_t size) {
 	if (size == 0) return;
 	if (num == 0) {
 		if (size > 1) {
@@ -133,7 +133,7 @@ void number_to_hex(long unsigned int num, char *buffer, size_t size) {
  * char* buffer - pointer to character array to write into
  * size_t - maximum safe size of buffer to be written into
  */
-void number_to_octal(long unsigned int num, char *buffer, size_t size) {
+void number_to_octal(unsigned long num, char *buffer, size_t size) {
 	if (size == 0) return;
 	if (num == 0) {
 		if (size > 1) {
@@ -166,7 +166,7 @@ void number_to_octal(long unsigned int num, char *buffer, size_t size) {
 /**
  * Function to check if provided binary value is power of 2
  */
-bool is_binary_pow_of_2(char *binary) {
+bool is_binary_pow_of_2(const char *binary) {
 	size_t binary_len = strlen(binary);
 
 	if (binary_len > 1 && binary[0] == '1') {
@@ -181,7 +181,7 @@ bool is_binary_pow_of_2(char *binary) {
 /**
  * Function to draw a table for representing positions of each bit of binary
  */
-void display_bit_layout(char *binary) {
+void display_bit_layout(const char *binary) {
 	size_t binary_len = strlen(binary);
 	size_t cols = 8;
 	size_t rows = (binary_len + (cols-1)) / cols; // +(cols-1) to ciel the binary_len to be divided by cols
@@ -219,7 +219,7 @@ void display_bit_layout(char *binary) {
 /**
  * Function to return decimal value for provided binary value
  */
-unsigned long binary_to_decimal(char *binary) {
+unsigned long binary_to_decimal(const char *binary) {
 	size_t binary_len = strlen(binary);
 	unsigned long binary_decimal = 0;
 

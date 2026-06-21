@@ -29,6 +29,7 @@
 
 typedef struct {
 	unsigned long value;
+	int binary_len;
 	char binary[BINARY_LEN];
 	char hex[HEX_LEN];
 	char octal[OCTAL_LEN];
@@ -45,6 +46,7 @@ typedef enum {
 	SHIFT_RIGHT
 } ShiftDirection;
 
+void run_binary_explorer();
 void clear_screen();
 void show_operations_menu();
 void perform_operations(const unsigned long num);
@@ -61,13 +63,16 @@ void set_prepend_bits(int difference, char *buffer);
 void exit_program();
 
 int main() {
+	run_binary_explorer();
+	return EXIT_SUCCESS;
+}
+
+void run_binary_explorer() {
 	clear_screen();
 
 	const unsigned long number = accept_unsigned_long("Reveal thy number for analysis", FORMAT_WIDTH);
 
 	perform_operations(number);
-
-	return 0;
 }
 
 /**
@@ -119,6 +124,7 @@ void perform_operations(const unsigned long num) {
 	number_to_binary(num, original.binary, sizeof(original.binary));
 	number_to_hex(num, original.hex, sizeof(original.hex));
 	number_to_octal(num, original.octal, sizeof(original.octal));
+	original.binary_len = strlen(original.binary);
 
 	draw_title("BINARY EXPLORER", FORMAT_WIDTH);
 	show_basic_num_info(&original);
@@ -158,7 +164,7 @@ void perform_operations(const unsigned long num) {
 				break;
 			case 9:
 				accepting_operation = false;
-				main();
+				run_binary_explorer();
 				break;
 			case 0:
 				exit_program();
@@ -220,7 +226,7 @@ void modify_bit(NumberSnapshot *original, BitOperation operation) {
 			operation == BIT_SET ?
 				"Enter bit position to set" :
 				"Enter bit position to clear",
-		strlen(original->binary) - 1,
+		original->binary_len - 1,
 		FORMAT_WIDTH
 	);
 
@@ -228,10 +234,10 @@ void modify_bit(NumberSnapshot *original, BitOperation operation) {
 	strcpy(new_binary, original->binary);
 
 	if (operation == BIT_TOGGLE) {
-		new_binary[strlen(original->binary) - selected_bit - 1] =
-			new_binary[strlen(original->binary) - selected_bit - 1] == '1' ? '0' : '1';
+		new_binary[original->binary_len - selected_bit - 1] =
+			new_binary[original->binary_len - selected_bit - 1] == '1' ? '0' : '1';
 	} else {
-		new_binary[strlen(original->binary) - selected_bit - 1] = operation + '0';
+		new_binary[original->binary_len - selected_bit - 1] = operation + '0';
 	}
 
 	unsigned long new_value = binary_to_decimal(new_binary);
@@ -256,11 +262,11 @@ void modify_bit(NumberSnapshot *original, BitOperation operation) {
 void check_bit(NumberSnapshot *original) {
 	display_current_num_binary(original);
 
-	const int selected_bit = accept_menu_option("Enter bit position to inspect", strlen(original->binary) - 1, FORMAT_WIDTH);
+	const int selected_bit = accept_menu_option("Enter bit position to inspect", original->binary_len - 1, FORMAT_WIDTH);
 
 	printf("\nBit Position : %d\n\n", selected_bit);
 
-	printf("Result : %s\n", original->binary[selected_bit] == '1' ? "SET" : "CLEAR");
+	printf("Result : %s\n", original->binary[original->binary_len - selected_bit - 1] == '1' ? "SET" : "CLEAR");
 }
 
 /**
@@ -272,7 +278,7 @@ void shift_bits(NumberSnapshot *original, ShiftDirection direction) {
 	// Note: For extremely large shift amount, the unexpected answer could be displayed
 	const unsigned int shift_amount = accept_unsigned_int("Enter shift amount", FORMAT_WIDTH);
 
-	const int new_value = direction == SHIFT_LEFT ?
+	const unsigned long new_value = direction == SHIFT_LEFT ?
 		original->value << shift_amount :
 		original->value >> shift_amount;
 
@@ -282,15 +288,15 @@ void shift_bits(NumberSnapshot *original, ShiftDirection direction) {
 	char before_prepend_bits[BINARY_LEN] = "";
 	char after_prepend_bits[BINARY_LEN] = "";
 
-	set_prepend_bits(strlen(new_binary) - strlen(original->binary), before_prepend_bits);
-	set_prepend_bits(strlen(original->binary) - strlen(new_binary), after_prepend_bits);
+	set_prepend_bits(strlen(new_binary) - original->binary_len, before_prepend_bits);
+	set_prepend_bits(original->binary_len - strlen(new_binary), after_prepend_bits);
 
 	printf("\nOperation: SHIFT %s %u\n\n", direction == SHIFT_LEFT ? "LEFT" : "RIGHT" , shift_amount);
 
 	printf("Before : %s%s\n", before_prepend_bits, original->binary);
 	printf("After  : %s%s\n\n", after_prepend_bits, new_binary);
 
-	printf("Decimal Result : %d\n", new_value);
+	printf("Decimal Result : %lu\n", new_value);
 }
 
 /**
@@ -302,7 +308,11 @@ void compare_with_2nd_number(NumberSnapshot *original) {
 	const unsigned long new_value = accept_unsigned_long("Enter second number", FORMAT_WIDTH);
 
 	const unsigned long add_value = original->value + new_value;
-	const long diff_value = original->value - new_value;
+	/**
+	 * Cast operands to long before subtraction to allow signed results.
+	 * Note: This is only reliable when both values fit within LONG_MAX.
+	 */
+	const long diff_value = (long)original->value - (long)new_value;
 	const unsigned long and_value = original->value & new_value;
 	const unsigned long or_value = original->value | new_value;
 	const unsigned long xor_value = original->value ^ new_value;
