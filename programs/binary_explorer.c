@@ -12,6 +12,7 @@
 #include <stddef.h> // for size_t type
 #include <string.h> // for strcpy, strlen functions
 
+#include "digits.h" // for digit functions
 #include "input.h" // for input functions
 #include "binary.h" // for binary functions, BinaryInfo struct
 #include "tui.h" // for TUI functions
@@ -55,6 +56,8 @@ void modify_bit(NumberSnapshot *original, BitOperation operation);
 void check_bit(NumberSnapshot *original);
 void shift_bits(NumberSnapshot *original, ShiftDirection direction);
 void compare_with_2nd_number(NumberSnapshot *original);
+void display_binary_operation(const char *operation, const char *top, const char *bottom, const char *result);
+void set_prepend_bits(int difference, char *buffer);
 void exit_program();
 
 int main() {
@@ -111,8 +114,6 @@ void show_operations_menu() {
  */
 void perform_operations(const unsigned long num) {
 	bool accepting_operation = true;
-	// bool perform_new_operation = false;
-
 
 	NumberSnapshot original = {.value = num};
 	number_to_binary(num, original.binary, sizeof(original.binary));
@@ -268,7 +269,8 @@ void check_bit(NumberSnapshot *original) {
 void shift_bits(NumberSnapshot *original, ShiftDirection direction) {
 	display_current_num_binary(original);
 
-	const unsigned long shift_amount = accept_unsigned_long("Enter shift amount", FORMAT_WIDTH);
+	// Note: For extremely large shift amount, the unexpected answer could be displayed
+	const unsigned int shift_amount = accept_unsigned_int("Enter shift amount", FORMAT_WIDTH);
 
 	const int new_value = direction == SHIFT_LEFT ?
 		original->value << shift_amount :
@@ -277,29 +279,108 @@ void shift_bits(NumberSnapshot *original, ShiftDirection direction) {
 	char new_binary[BINARY_LEN];
 	number_to_binary(new_value, new_binary, sizeof(new_binary));
 
-	int binary_len_diff = strlen(original->binary) - strlen(new_binary);
-	char prepend_bits[BINARY_LEN];
+	char before_prepend_bits[BINARY_LEN] = "";
+	char after_prepend_bits[BINARY_LEN] = "";
 
-	if (binary_len_diff) {
-		int write_index;
-		for (write_index = 0; write_index < abs(binary_len_diff); write_index++) {
-			prepend_bits[write_index] = '0';
-		}
-		prepend_bits[write_index] = '\0';
-	}
+	set_prepend_bits(strlen(new_binary) - strlen(original->binary), before_prepend_bits);
+	set_prepend_bits(strlen(original->binary) - strlen(new_binary), after_prepend_bits);
 
-	printf("\nOperation: SHIFT %s %lu\n\n", direction == SHIFT_LEFT ? "LEFT" : "RIGHT" , shift_amount);
+	printf("\nOperation: SHIFT %s %u\n\n", direction == SHIFT_LEFT ? "LEFT" : "RIGHT" , shift_amount);
 
-	printf("Before : %s%s\n", binary_len_diff < 0 ? prepend_bits : "", original->binary);
-	printf("After  : %s%s\n\n", binary_len_diff > 0 ? prepend_bits : "", new_binary);
+	printf("Before : %s%s\n", before_prepend_bits, original->binary);
+	printf("After  : %s%s\n\n", after_prepend_bits, new_binary);
 
 	printf("Decimal Result : %d\n", new_value);
 }
 
+/**
+ * Function to compare user provided number with an additional number and display results of multiple operations
+ */
 void compare_with_2nd_number(NumberSnapshot *original) {
+	printf("Current Number : %lu\n", original->value);
 
+	const unsigned long new_value = accept_unsigned_long("Enter second number", FORMAT_WIDTH);
+
+	const unsigned long add_value = original->value + new_value;
+	const long diff_value = original->value - new_value;
+	const unsigned long and_value = original->value & new_value;
+	const unsigned long or_value = original->value | new_value;
+	const unsigned long xor_value = original->value ^ new_value;
+
+	char new_binary[BINARY_LEN], add_binary[BINARY_LEN], diff_binary[BINARY_LEN],
+	and_binary[BINARY_LEN], or_binary[BINARY_LEN], xor_binary[BINARY_LEN];
+
+	number_to_binary(new_value, new_binary, sizeof(new_binary));
+	number_to_binary(add_value, add_binary, sizeof(add_binary));
+	number_to_binary(diff_value, diff_binary, sizeof(diff_binary));
+	number_to_binary(and_value, and_binary, sizeof(and_binary));
+	number_to_binary(or_value, or_binary, sizeof(or_binary));
+	number_to_binary(xor_value, xor_binary, sizeof(xor_binary));
+
+	display_binary_operation("Addition", original->binary, new_binary, add_binary);
+	printf("Result: %lu\n", add_value);
+	draw_single_line_separator(FORMAT_WIDTH);
+
+	display_binary_operation("Subtraction", original->binary, new_binary, diff_binary);
+	printf("Result: %lu\n", diff_value);
+	draw_single_line_separator(FORMAT_WIDTH);
+
+	display_binary_operation("AND", original->binary, new_binary, and_binary);
+	printf("Result: %lu\n", and_value);
+	draw_single_line_separator(FORMAT_WIDTH);
+
+	display_binary_operation("OR", original->binary, new_binary, or_binary);
+	printf("Result: %lu\n", or_value);
+	draw_single_line_separator(FORMAT_WIDTH);
+
+	display_binary_operation("XOR", original->binary, new_binary, xor_binary);
+	printf("Result: %lu\n", xor_value);
+	draw_single_line_separator(FORMAT_WIDTH);
 }
 
+/**
+ * Function to display an operation of two binaries and their result
+ */
+void display_binary_operation(const char *operation, const char *top, const char *bottom, const char *result) {
+	int top_len = (int)strlen(top);
+	int bottom_len = (int)strlen(bottom);
+	int result_len = (int)strlen(result);
+	int max_len = max_of_three(top_len, bottom_len, result_len);
+
+	char top_prepend_bits[BINARY_LEN] = "";
+	char bottom_prepend_bits[BINARY_LEN] = "";
+	char result_prepend_bits[BINARY_LEN] = "";
+
+	set_prepend_bits(max_len - top_len, top_prepend_bits);
+	set_prepend_bits(max_len - bottom_len, bottom_prepend_bits);
+	set_prepend_bits(max_len - result_len, result_prepend_bits);
+
+	printf("\n%s\n\n", operation);
+
+	printf("%s%s\n", top_prepend_bits, top);
+	printf("%s%s", bottom_prepend_bits, bottom);
+	draw_single_line_separator(max_len);
+	printf("%s%s\n\n", result_prepend_bits, result);
+}
+
+/**
+ * Function to prepend bits to the buffer based on the difference
+ */
+void set_prepend_bits(int difference, char *buffer) {
+	if (!difference) return;
+
+	if (difference > 0) {
+		int write_index;
+		for (write_index = 0; write_index < abs(difference); write_index++) {
+			buffer[write_index] = '0';
+		}
+		buffer[write_index] = '\0';
+	}
+}
+
+/**
+ * Function to exit the program
+ */
 void exit_program() {
 	printf("Thank you for using Binary Explorer.\n");
 	printf("Goodbye!\n");

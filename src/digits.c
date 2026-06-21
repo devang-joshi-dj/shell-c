@@ -44,3 +44,13 @@ size_t get_digit_sum(unsigned long num) {
 int get_unit_digit(const unsigned long num) {
 	return num % 10;
 }
+
+/**
+ * Function to return maximum value out of three given numbers
+ */
+int max_of_three(const int a, const int b, const int c) {
+	int max = a;
+	if (b > max) max = b;
+	if (c > max) max = c;
+	return max;
+}
