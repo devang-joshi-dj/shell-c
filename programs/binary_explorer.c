@@ -29,7 +29,7 @@
 
 typedef struct {
 	unsigned long value;
-	int binary_len;
+	size_t binary_len;
 	char binary[BINARY_LEN];
 	char hex[HEX_LEN];
 	char octal[OCTAL_LEN];
@@ -240,7 +240,7 @@ void modify_bit(NumberSnapshot *original, BitOperation operation) {
 		new_binary[original->binary_len - selected_bit - 1] = operation + '0';
 	}
 
-	unsigned long new_value = binary_to_decimal(new_binary);
+	const unsigned long new_value = binary_to_decimal(new_binary);
 
 
 	printf(
@@ -277,6 +277,11 @@ void shift_bits(NumberSnapshot *original, ShiftDirection direction) {
 
 	// Note: For extremely large shift amount, the unexpected answer could be displayed
 	const unsigned int shift_amount = accept_unsigned_int("Enter shift amount", FORMAT_WIDTH);
+
+	if (shift_amount >= ULONG_BITS) {
+		draw_error("Shift amount must be less than the total number of bits.", FORMAT_WIDTH);
+		return;
+	}
 
 	const unsigned long new_value = direction == SHIFT_LEFT ?
 		original->value << shift_amount :

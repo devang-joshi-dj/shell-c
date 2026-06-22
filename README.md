@@ -1,6 +1,6 @@
 # shell-c
 
-A collection of terminal-based C programs built while learning the C programming language, terminal user interfaces, problem solving, and low-level programming concepts.
+A collection of terminal-based C programs built while learning C programming, software design, terminal user interfaces, and low-level programming concepts.
 
 ## Programs
 
@@ -22,6 +22,7 @@ Generates and displays all prime numbers up to a user-specified number.
 - Function decomposition
 - Prime number algorithms
 - Time complexity considerations
+- Algorithm design
 
 
 ### Number Analyzer
@@ -32,10 +33,10 @@ Analyzes a user-provided number and displays its mathematical, logical and binar
 - Calculates digit sum
 - Detects prime numbers
 - Detects even and odd numbers
-- Detects palindrome
-- Detects armstrong numbers
+- Detects palindromes
+- Detects Armstrong numbers
 - Detects perfect numbers
-- Detects harshad numbers
+- Detects Harshad numbers
 - Displays binary notation
 - Detects binary palindrome
 - Calculates binary digit counts (total, 1s, 0s)
@@ -52,7 +53,7 @@ Analyzes a user-provided number and displays its mathematical, logical and binar
 - Binary representation
 
 
-### Binary Explorer (WIP)
+### Binary Explorer
 Interactive program for visualizing and manipulating the binary representation of a user-provided number.
 
 #### Features
@@ -63,21 +64,32 @@ Interactive program for visualizing and manipulating the binary representation o
 	- Octal representation
 	- Number of set bits
 	- Number of clear bits
+	- Number of total bits
+	- Checking if the number is a power of two
 	- Binary palindrome detection
+	- Parity check
 	- Bit layout
 - Setting bit
 - Clearing bit
 - Toggling bit
 - Checking bit
 - Shifting bits
-- Counting total, set, unset bits,
-- Checking if the number is a power of two
 - Comparing 2 binary numbers and showing their following results
 	- Addition
 	- Subtraction
 	- AND
 	- OR
 	- XOR
+
+#### Concepts Practiced
+- Bitwise operations and bit manipulation
+- Binary, hexadecimal, and octal conversions
+- Structs and enums
+- Input validation and error handling
+- String manipulation
+- Modular programming
+- Terminal UI development
+- Binary analysis and comparisons
 
 ### Calculator (WIP)
 Interactive calculator to perform mathematical operations through a menu-driven interface.
@@ -113,12 +125,14 @@ Build a specific program:
 ```bash
 make prime_generator
 make number_analyzer
+make binary_explorer
 ```
 
 Run a program:
 ```bash
 make run-pg
 make run-na
+make run-be
 ```
 
 Remove compiled executables:
@@ -151,3 +165,4 @@ This repository is primarily a learning project focused on:
 - Header and source file separation
 - Terminal user interface development
 - Number theory and mathematical algorithms
+- Binary representation and bit manipulation
