@@ -48,6 +48,11 @@ binary_explorer:
 	$(SRC)/input.c $(SRC)/tui.c $(SRC)/digits.c $(SRC)/binary.c $(SRC)/system.c \
 	$(COMMONFLAGS) -o $(BIN)/binary_explorer $(LDFLAGS)
 
+calculator:
+	$(CC) $(PROG)/calculator.c \
+	$(SRC)/input.c $(SRC)/tui.c $(SRC)/system.c \
+	$(COMMONFLAGS) -o $(BIN)/calculator $(LDFLAGS)
+
 
 run-na: number_analyzer
 	./$(BIN)/number_analyzer
@@ -57,6 +62,9 @@ run-pg: prime_generator
 
 run-be: binary_explorer
 	./$(BIN)/binary_explorer
+
+run-calc: calculator
+	./$(BIN)/calculator
 
 # Remove compiled binaries
 clean:

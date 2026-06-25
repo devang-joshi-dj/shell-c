@@ -24,7 +24,9 @@
 #include <stdio.h> // for printf functions
 #include <stdlib.h> // for system function
 
+#include "input.h" // for input functions
 #include "tui.h" // for TUI functions
+#include "system.h" // for system functions
 
 // display optimized for 64 character tables
 // Note: extremely large values may not fit in all views
@@ -33,21 +35,65 @@
 #define MENU_ITEMS 13
 
 void show_welcome_message();
+void perform_operations();
 void show_operations_menu();
 
 int main() {
-	system("clear"); // for clearing terminal in Linux/macOS
-	show_welcome_message();
-	show_operations_menu();
+	clear_screen();
 
-	return 0;
+	show_welcome_message();
+	perform_operations();
+
+	return EXIT_SUCCESS;
 }
 
 /**
  * Function to show welcome message to user
  */
 void show_welcome_message() {
+	draw_title("CALCULATOR", FORMAT_WIDTH);
 	printf("Welcome to Calculator. Thank You for opening it. It tells me that you already very smart person ;)\n");
+}
+
+void perform_operations() {
+	show_operations_menu();
+	const int selected_option = accept_menu_option("Choice", MENU_ITEMS, FORMAT_WIDTH);
+	draw_single_line_separator(FORMAT_WIDTH);
+	printf("\n");
+
+	switch (selected_option) {
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		case 6:
+			break;
+		case 7:
+			break;
+		case 8:
+			break;
+		case 9:
+			break;
+		case 10:
+			break;
+		case 11:
+			break;
+		case 12:
+			break;
+		case 13:
+			break;
+		case 0:
+			exit_program("Thank you for using Calculator.\n");
+			break;
+	}
+
+	wait_for_enter();
 }
 
 /**

@@ -5,8 +5,8 @@
  * Provides an interactive environment for exploring
  * binary representation and bit-level operations.
  */
-#include <stdio.h> // for fflush, printf functions
-#include <stdlib.h> // for EXIT_SUCCESS, abs, labs, exit functions
+#include <stdio.h> // for printf functions
+#include <stdlib.h> // for EXIT_SUCCESS, abs, labs functions
 #include <stdbool.h> // for bool type
 #include <limits.h> // for CHAR_BIT
 #include <stddef.h> // for size_t type
