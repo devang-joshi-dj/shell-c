@@ -8,27 +8,32 @@
  *
  * The program to perform mathematical operations through interactive menu
  * Menu includes operations -
- *  Addition, Subtraction, Multiplication, Division,
- *  Power, Square, Square Root, Cube, Cube Root, Modulus,
+ *  Addition, Subtraction, Multiplication, Division, Modulus,
+ *  Power, Square, Square Root, Cube, Cube Root,
  *  View History, Clear History, Save History to file, Exit
- *  Continuous Calculation, Expression Calculation (in near future)
+ *  Continuous Calculation, Expression Calculation
  * When user chooses an operation,
  *  if applicable,
  *      it asks number of numbers to input for that particular operation,
  *      it asks base and power to input for that particular operation,
  *  and then input the desired numbers
  * Divide by zero handling
- * Even/Odd, Prime Number, Palindrome detector of result
- * History of every calculation is recorded and can be cleared
+ * History of every calculation with timestamp is recorded and can be cleared
  * Exit with exit message of active session time, calculations done in the exited session of the program
  */
 #include <stdio.h> // for printf functions
 #include <stdlib.h> // for system function
 
-#define MENU_ITEMS 15
+#include "tui.h" // for TUI functions
+
+// display optimized for 64 character tables
+// Note: extremely large values may not fit in all views
+#define FORMAT_WIDTH 64
+
+#define MENU_ITEMS 13
 
 void show_welcome_message();
-int show_operations_menu();
+void show_operations_menu();
 
 int main() {
 	system("clear"); // for clearing terminal in Linux/macOS
@@ -48,30 +53,28 @@ void show_welcome_message() {
 /**
  * Function to show operations menu to user and accept input, validate it, return it
  */
-int show_operations_menu() {
-	int value;
-	char menu[MENU_ITEMS][MENU_ITEMS*4] = {
-		"Please choose from the menu below to select an operation:",
+void show_operations_menu() {
+	char menu[MENU_ITEMS][MENU_ITEMS*2] = {
 		"Addition",
 		"Subtraction",
 		"Multiplication",
 		"Division",
+		"Modulus",
 		"Power",
 		"Square",
 		"Square Root",
 		"Cube",
 		"Cube Root",
-		"Modulus",
 		"View History",
 		"Clear History",
 		"Save History to file",
-		"Exit"
 	};
 
-	for (int i = 0; i < MENU_ITEMS; i++) {
-		if (!i) printf("%s\n", menu[0]);
-		printf("%d. %s\n", i, menu[i]);
-	}
+	draw_double_line_separator(FORMAT_WIDTH);
 
-	return value;
+	printf("\n");
+	for (int i = 0; i < MENU_ITEMS; i++) {
+		printf("%d. %s\n", i+1, menu[i]);
+	}
+	printf("0. Exit\n\n");
 }

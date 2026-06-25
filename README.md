@@ -94,6 +94,20 @@ Interactive program for visualizing and manipulating the binary representation o
 ### Calculator (WIP)
 Interactive calculator to perform mathematical operations through a menu-driven interface.
 
+#### Features
+- Interactive menu-driven interface
+- Addition, subtraction, multiplication, and division
+- Modulus and exponentiation operations
+- Square, cube, square root, and cube root calculations
+- Input validation and error handling
+- Division-by-zero protection
+- Calculation history tracking
+- View and clear calculation history
+- Session statistics
+- Save calculation history to a file
+- Continuous calculation mode
+- Mathematical expression evaluation
+
 ---
 
 ## Project Structure

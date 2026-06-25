@@ -3,7 +3,7 @@
  *
  * Terminal user interface helpers and formatting.
  */
-#include <stdio.h> // for printf, snprintf functions
+#include <stdio.h> // for size_t, printf, snprintf functions
 #include <string.h> // for strlen function
 
 #include "input.h" // for INPUT_BUFFER_SIZE

@@ -22,7 +22,6 @@
 
 // maximum binary digits for unsigned long plus null terminator
 #define BINARY_LEN ((sizeof(unsigned long) * CHAR_BIT) + 1)
-#define INPUT_BUFFER_SIZE 100
 
 typedef struct {
 	unsigned long number;

@@ -16,6 +16,7 @@
 #include "input.h" // for input functions
 #include "binary.h" // for binary functions, BinaryInfo struct
 #include "tui.h" // for TUI functions
+#include "system.h" // for system functions
 
 // display optimized for 64 character tables
 // Note: extremely large values may not fit in all views
@@ -26,14 +27,6 @@
 #define BINARY_LEN (ULONG_BITS + 1) // +1 for \0
 #define HEX_LEN (ULONG_BITS / 4 + 3) // +3 for \0, 0, x
 #define OCTAL_LEN ((ULONG_BITS + 2) / 3 + 2) // +2 for \0, 0
-
-typedef struct {
-	unsigned long value;
-	size_t binary_len;
-	char binary[BINARY_LEN];
-	char hex[HEX_LEN];
-	char octal[OCTAL_LEN];
-} NumberSnapshot;
 
 typedef enum {
 	BIT_CLEAR,
@@ -46,21 +39,39 @@ typedef enum {
 	SHIFT_RIGHT
 } ShiftDirection;
 
+typedef struct {
+	unsigned long value;
+	size_t binary_len;
+	char binary[BINARY_LEN];
+	char hex[HEX_LEN];
+	char octal[OCTAL_LEN];
+} NumberSnapshot;
+
 void run_binary_explorer();
-void clear_screen();
 void show_operations_menu();
 void perform_operations(const unsigned long num);
 
-void display_current_num_binary(NumberSnapshot *original);
-void show_basic_num_info(NumberSnapshot *original);
-void show_num_info(NumberSnapshot *original);
-void modify_bit(NumberSnapshot *original, BitOperation operation);
-void check_bit(NumberSnapshot *original);
-void shift_bits(NumberSnapshot *original, ShiftDirection direction);
-void compare_with_2nd_number(NumberSnapshot *original);
+void display_current_num_binary(const NumberSnapshot *original);
+void show_basic_num_info(const NumberSnapshot *original);
+void show_num_info(const NumberSnapshot *original);
+void modify_bit(const NumberSnapshot *original, const BitOperation operation);
+void check_bit(const NumberSnapshot *original);
+void shift_bits(const NumberSnapshot *original, ShiftDirection direction);
+void compare_with_2nd_number(const NumberSnapshot *original);
 void display_binary_operation(const char *operation, const char *top, const char *bottom, const char *result);
 void set_prepend_bits(int difference, char *buffer);
-void exit_program();
+
+const char MENU[MENU_ITEMS][MENU_ITEMS*4] = {
+	"Show Number Information",
+	"Set a Bit",
+	"Clear a Bit",
+	"Toggle a Bit",
+	"Check a Bit",
+	"Shift Left",
+	"Shift Right",
+	"Compare With Another Number",
+	"Enter New Number",
+};
 
 int main() {
 	run_binary_explorer();
@@ -76,39 +87,14 @@ void run_binary_explorer() {
 }
 
 /**
- * Function to clear terminal using ANSI escape sequences
- */
-void clear_screen() {
-	/**
-	 * \033[2J - clears the entire screen
-	 * \033[H - move cursor to top-left corner
-	 */
-	printf("\033[2J\033[H");
-	fflush(stdout);
-}
-
-
-/**
  * Function to show operations menu to user and accept input, validate it, return it
  */
 void show_operations_menu() {
-	char menu[MENU_ITEMS][MENU_ITEMS*4] = {
-		"Show Number Information",
-		"Set a Bit",
-		"Clear a Bit",
-		"Toggle a Bit",
-		"Check a Bit",
-		"Shift Left",
-		"Shift Right",
-		"Compare With Another Number",
-		"Enter New Number",
-	};
-
 	draw_double_line_separator(FORMAT_WIDTH);
 
 	printf("\n");
 	for (int i = 0; i < MENU_ITEMS; i++) {
-		printf("%d. %s\n", i+1, menu[i]);
+		printf("%d. %s\n", i+1, MENU[i]);
 	}
 	printf("0. Exit\n\n");
 
@@ -167,7 +153,7 @@ void perform_operations(const unsigned long num) {
 				run_binary_explorer();
 				break;
 			case 0:
-				exit_program();
+				exit_program("Thank you for using Binary Explorer.\n");
 				break;
 		}
 
@@ -175,7 +161,7 @@ void perform_operations(const unsigned long num) {
 	}
 }
 
-void display_current_num_binary(NumberSnapshot *original) {
+void display_current_num_binary(const NumberSnapshot *original) {
 	printf("Current Number : ");
 	printf("%lu = %s\n\n", original->value, original->binary);
 }
@@ -183,7 +169,7 @@ void display_current_num_binary(NumberSnapshot *original) {
 /**
  * Function to show basic information of the number at the start of the program
  */
-void show_basic_num_info(NumberSnapshot *original) {
+void show_basic_num_info(const NumberSnapshot *original) {
 	printf("Current Number\n\n");
 
 	printf("Decimal : %lu\n", original->value);
@@ -195,7 +181,7 @@ void show_basic_num_info(NumberSnapshot *original) {
 /**
  * Function to show detailed information of the number
  */
-void show_num_info(NumberSnapshot *original) {
+void show_num_info(const NumberSnapshot *original) {
 	BinaryInfo binary_info = get_binary_analysis(original->binary);
 	printf("Decimal : %lu\n", original->value);
 	printf("Binary  : %s\n", original->binary);
@@ -217,7 +203,7 @@ void show_num_info(NumberSnapshot *original) {
 /**
  * Function to modify a binary number's bit and display newly generated decimal after binary bit modification
  */
-void modify_bit(NumberSnapshot *original, BitOperation operation) {
+void modify_bit(const NumberSnapshot *original, const BitOperation operation) {
 	display_current_num_binary(original);
 
 	const int selected_bit = accept_menu_option(
@@ -259,7 +245,7 @@ void modify_bit(NumberSnapshot *original, BitOperation operation) {
 /**
  * Function to inspect the binary bit and display if selected bit is set or clear
  */
-void check_bit(NumberSnapshot *original) {
+void check_bit(const NumberSnapshot *original) {
 	display_current_num_binary(original);
 
 	const int selected_bit = accept_menu_option("Enter bit position to inspect", original->binary_len - 1, FORMAT_WIDTH);
@@ -272,7 +258,7 @@ void check_bit(NumberSnapshot *original) {
 /**
  * Function to shift the bits of the given number by user provided amount
  */
-void shift_bits(NumberSnapshot *original, ShiftDirection direction) {
+void shift_bits(const NumberSnapshot *original, ShiftDirection direction) {
 	display_current_num_binary(original);
 
 	// Note: For extremely large shift amount, the unexpected answer could be displayed
@@ -307,7 +293,7 @@ void shift_bits(NumberSnapshot *original, ShiftDirection direction) {
 /**
  * Function to compare user provided number with an additional number and display results of multiple operations
  */
-void compare_with_2nd_number(NumberSnapshot *original) {
+void compare_with_2nd_number(const NumberSnapshot *original) {
 	printf("Current Number : %lu\n", original->value);
 
 	const unsigned long new_value = accept_unsigned_long("Enter second number", FORMAT_WIDTH);
@@ -397,13 +383,4 @@ void set_prepend_bits(int difference, char *buffer) {
 		}
 		buffer[write_index] = '\0';
 	}
-}
-
-/**
- * Function to exit the program
- */
-void exit_program() {
-	printf("Thank you for using Binary Explorer.\n");
-	printf("Goodbye!\n");
-	exit(EXIT_SUCCESS);
 }
