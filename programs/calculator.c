@@ -23,6 +23,7 @@
  */
 #include <stdio.h> // for printf functions
 #include <stdlib.h> // for system function
+#include <math.h>
 
 #include "input.h" // for input functions
 #include "tui.h" // for TUI functions
@@ -37,70 +38,14 @@
 void show_welcome_message();
 void perform_operations();
 void show_operations_menu();
+void addition();
+void subtraction();
+void multiplication();
+void division();
+void modulus();
+void display_result(long double result);
 
-int main() {
-	clear_screen();
-
-	show_welcome_message();
-	perform_operations();
-
-	return EXIT_SUCCESS;
-}
-
-/**
- * Function to show welcome message to user
- */
-void show_welcome_message() {
-	draw_title("CALCULATOR", FORMAT_WIDTH);
-	printf("Welcome to Calculator. Thank You for opening it. It tells me that you already very smart person ;)\n");
-}
-
-void perform_operations() {
-	show_operations_menu();
-	const int selected_option = accept_menu_option("Choice", MENU_ITEMS, FORMAT_WIDTH);
-	draw_single_line_separator(FORMAT_WIDTH);
-	printf("\n");
-
-	switch (selected_option) {
-		case 1:
-			break;
-		case 2:
-			break;
-		case 3:
-			break;
-		case 4:
-			break;
-		case 5:
-			break;
-		case 6:
-			break;
-		case 7:
-			break;
-		case 8:
-			break;
-		case 9:
-			break;
-		case 10:
-			break;
-		case 11:
-			break;
-		case 12:
-			break;
-		case 13:
-			break;
-		case 0:
-			exit_program("Thank you for using Calculator.\n");
-			break;
-	}
-
-	wait_for_enter();
-}
-
-/**
- * Function to show operations menu to user and accept input, validate it, return it
- */
-void show_operations_menu() {
-	char menu[MENU_ITEMS][MENU_ITEMS*2] = {
+char MENU[MENU_ITEMS][MENU_ITEMS*2] = {
 		"Addition",
 		"Subtraction",
 		"Multiplication",
@@ -116,11 +61,119 @@ void show_operations_menu() {
 		"Save History to file",
 	};
 
+int main() {
+	clear_screen();
+
+	show_welcome_message();
+	perform_operations();
+
+	return EXIT_SUCCESS;
+}
+
+/**
+ * Function to show welcome message to user
+ */
+void show_welcome_message() {
+	draw_title("CALCULATOR", FORMAT_WIDTH);
+	printf("Welcome to Calculator. Thank You for opening it. It tells me that you already very smart person ;)");
+}
+
+void perform_operations() {
+	while (true) {
+		show_operations_menu();
+		const int selected_option = accept_menu_option("Choice", MENU_ITEMS, FORMAT_WIDTH);
+		draw_single_line_separator(FORMAT_WIDTH);
+		printf("\n");
+
+		switch (selected_option) {
+			case 1:
+				addition();
+				break;
+			case 2:
+				subtraction();
+				break;
+			case 3:
+				multiplication();
+				break;
+			case 4:
+				division();
+				break;
+			case 5:
+				modulus();
+				break;
+			case 6:
+				break;
+			case 7:
+				break;
+			case 8:
+				break;
+			case 9:
+				break;
+			case 10:
+				break;
+			case 11:
+				break;
+			case 12:
+				break;
+			case 13:
+				break;
+			case 0:
+				exit_program("Thank you for using Calculator.\n");
+				break;
+		}
+
+		wait_for_enter();
+	}
+}
+
+/**
+ * Function to show operations menu to user and accept input, validate it, return it
+ */
+void show_operations_menu() {
 	draw_double_line_separator(FORMAT_WIDTH);
 
 	printf("\n");
 	for (int i = 0; i < MENU_ITEMS; i++) {
-		printf("%d. %s\n", i+1, menu[i]);
+		printf("%d. %s\n", i+1, MENU[i]);
 	}
 	printf("0. Exit\n\n");
+}
+
+void addition() {
+	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
+	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
+
+	display_result(num1 + num2);
+}
+
+void subtraction() {
+	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
+	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
+
+	display_result(num1 - num2);
+}
+
+void multiplication() {
+	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
+	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
+
+	display_result(num1 * num2);
+}
+
+void division() {
+	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
+	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
+
+	display_result(num1 / num2);
+}
+
+void modulus() {
+	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
+	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
+
+	display_result(fmodl(num1, num2));
+}
+
+void display_result(long double result) {
+	printf("\nResult = %Lg\n", result);
 }

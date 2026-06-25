@@ -7,6 +7,7 @@
 
 unsigned long accept_unsigned_long(const char *prompt, const int FORMAT_WIDTH);
 unsigned int accept_unsigned_int(const char *prompt, const int FORMAT_WIDTH);
+long double accept_long_double(const char *prompt, const int FORMAT_WIDTH);
 unsigned int accept_menu_option(
 	const char *prompt,
 	const size_t max_options,
