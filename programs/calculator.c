@@ -43,23 +43,28 @@ void subtraction();
 void multiplication();
 void division();
 void modulus();
+void power();
+void square();
+void square_root();
+void cube();
+void cube_root();
 void display_result(long double result);
 
 char MENU[MENU_ITEMS][MENU_ITEMS*2] = {
-		"Addition",
-		"Subtraction",
-		"Multiplication",
-		"Division",
-		"Modulus",
-		"Power",
-		"Square",
-		"Square Root",
-		"Cube",
-		"Cube Root",
-		"View History",
-		"Clear History",
-		"Save History to file",
-	};
+	"Addition",
+	"Subtraction",
+	"Multiplication",
+	"Division",
+	"Modulus",
+	"Power",
+	"Square",
+	"Square Root",
+	"Cube",
+	"Cube Root",
+	"View History",
+	"Clear History",
+	"Save History to file",
+};
 
 int main() {
 	clear_screen();
@@ -102,14 +107,19 @@ void perform_operations() {
 				modulus();
 				break;
 			case 6:
+				power();
 				break;
 			case 7:
+				square();
 				break;
 			case 8:
+				square_root();
 				break;
 			case 9:
+				cube();
 				break;
 			case 10:
+				cube_root();
 				break;
 			case 11:
 				break;
@@ -173,6 +183,38 @@ void modulus() {
 
 	display_result(fmodl(num1, num2));
 }
+
+void power()  {
+	const long double base = accept_long_double("Enter base number", FORMAT_WIDTH);
+	const long double power = accept_long_double("Enter power      ", FORMAT_WIDTH);
+
+	display_result(powl(base, power));
+}
+
+void square()  {
+	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
+
+	display_result(num * num);
+}
+
+void square_root() {
+	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
+
+	display_result(sqrtl(num));
+}
+
+void cube()  {
+	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
+
+	display_result(num * num * num);
+}
+
+void cube_root() {
+	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
+
+	display_result(cbrtl(num));
+}
+
 
 void display_result(long double result) {
 	printf("\nResult = %Lg\n", result);
