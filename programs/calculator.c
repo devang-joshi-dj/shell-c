@@ -22,8 +22,9 @@
  * Exit with exit message of active session time, calculations done in the exited session of the program
  */
 #include <stdio.h> // for printf functions
-#include <stdlib.h> // for system function
-#include <math.h>
+#include <stdlib.h> // for EXIT_SUCCESS
+#include <math.h> // for cbrtl, fmodl, powl, sqrtl
+#include <errno.h> // for EDOM, errno
 
 #include "input.h" // for input functions
 #include "tui.h" // for TUI functions
@@ -34,6 +35,30 @@
 #define FORMAT_WIDTH 64
 
 #define MENU_ITEMS 13
+
+typedef enum {
+	OP_ADD,
+	OP_SUBTRACT,
+	OP_MULTIPLY,
+	OP_DIVIDE,
+	OP_MODULUS,
+	OP_POWER,
+	OP_SQUARE,
+	OP_SQRT,
+	OP_CUBE,
+	OP_CBRT
+} Operation;
+
+typedef struct {
+	Operation operation;
+	long double operand1;
+	long double operand2;
+
+	bool has_second_operand;
+
+	long double result;
+	size_t timestamp;
+} HistoryEntry;
 
 void show_welcome_message();
 void perform_operations();
@@ -50,7 +75,9 @@ void cube();
 void cube_root();
 void display_result(long double result);
 
-char MENU[MENU_ITEMS][MENU_ITEMS*2] = {
+// HistoryEntry *history = malloc(4 * sizeof(HistoryEntry));
+
+const char MENU[MENU_ITEMS][MENU_ITEMS*2] = {
 	"Addition",
 	"Subtraction",
 	"Multiplication",
@@ -154,6 +181,7 @@ void addition() {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 
 	display_result(num1 + num2);
+	// add_to_history(num, result);
 }
 
 void subtraction() {
@@ -174,6 +202,11 @@ void division() {
 	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 
+	if (num2 == 0.0L) {
+		draw_error("Cannot divide by zero", FORMAT_WIDTH);
+		return;
+	}
+
 	display_result(num1 / num2);
 }
 
@@ -181,14 +214,28 @@ void modulus() {
 	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 
+	if (num2 == 0.0L) {
+		draw_error("Cannot perform modulus by zero", FORMAT_WIDTH);
+		return;
+	}
+
 	display_result(fmodl(num1, num2));
 }
 
 void power()  {
-	const long double base = accept_long_double("Enter base number", FORMAT_WIDTH);
-	const long double power = accept_long_double("Enter power      ", FORMAT_WIDTH);
+	const long double base = accept_long_double("Enter base    ", FORMAT_WIDTH);
+	const long double exponent = accept_long_double("Enter exponent", FORMAT_WIDTH);
 
-	display_result(powl(base, power));
+	errno = 0;
+
+	const long double result = powl(base, exponent);
+
+	if (errno == EDOM) {
+		draw_error("Invalid power operation", FORMAT_WIDTH);
+		return;
+	}
+
+	display_result(result);
 }
 
 void square()  {
@@ -199,6 +246,11 @@ void square()  {
 
 void square_root() {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
+
+	if (num < 0.0L) {
+		draw_error("Cannot calculate the square root of a negative number", FORMAT_WIDTH);
+		return;
+	}
 
 	display_result(sqrtl(num));
 }
@@ -217,5 +269,10 @@ void cube_root() {
 
 
 void display_result(long double result) {
+	if (!isfinite(result)) {
+		draw_error("Calculation result is outside the supported range", FORMAT_WIDTH);
+		return;
+	}
+
 	printf("\nResult = %Lg\n", result);
 }
