@@ -21,10 +21,12 @@
  * History of every calculation with timestamp is recorded and can be cleared
  * Exit with exit message of active session time, calculations done in the exited session of the program
  */
-#include <stdio.h> // for printf functions
-#include <stdlib.h> // for EXIT_SUCCESS
-#include <math.h> // for cbrtl, fmodl, powl, sqrtl
+#include <stdio.h> // for printf
+#include <stdlib.h> // for EXIT_SUCCESS, NULL, free, malloc
+#include <math.h> // for cbrtl, fmodl, isfinite, powl, sqrtl
 #include <errno.h> // for EDOM, errno
+#include <stddef.h> // for size_t type
+#include <time.h> // NULL, time, time_t
 
 #include "input.h" // for input functions
 #include "tui.h" // for TUI functions
@@ -35,6 +37,7 @@
 #define FORMAT_WIDTH 64
 
 #define MENU_ITEMS 13
+#define INITIAL_HISTORY_CAPACITY 4
 
 typedef enum {
 	OP_ADD,
@@ -57,7 +60,7 @@ typedef struct {
 	bool has_second_operand;
 
 	long double result;
-	size_t timestamp;
+	time_t timestamp;
 } HistoryEntry;
 
 void show_welcome_message();
@@ -74,8 +77,21 @@ void square_root();
 void cube();
 void cube_root();
 void display_result(long double result);
+void init_history();
+void add_to_history(
+	Operation operation,
+	long double num1,
+	long double num2,
+	bool has_second_operand,
+	long double result
+);
+void view_history();
+void clear_history();
+void save_history();
 
-// HistoryEntry *history = malloc(4 * sizeof(HistoryEntry));
+HistoryEntry *history = NULL;
+size_t history_capacity = 0;
+size_t history_size = 0;
 
 const char MENU[MENU_ITEMS][MENU_ITEMS*2] = {
 	"Addition",
@@ -92,6 +108,8 @@ const char MENU[MENU_ITEMS][MENU_ITEMS*2] = {
 	"Clear History",
 	"Save History to file",
 };
+
+const char *OPERATIONS[] = {"+", "-", "*", "/", "%", "^", "^2", "^½", "^3", "^⅓"};
 
 int main() {
 	clear_screen();
@@ -111,6 +129,8 @@ void show_welcome_message() {
 }
 
 void perform_operations() {
+	init_history();
+
 	while (true) {
 		show_operations_menu();
 		const int selected_option = accept_menu_option("Choice", MENU_ITEMS, FORMAT_WIDTH);
@@ -118,43 +138,21 @@ void perform_operations() {
 		printf("\n");
 
 		switch (selected_option) {
-			case 1:
-				addition();
-				break;
-			case 2:
-				subtraction();
-				break;
-			case 3:
-				multiplication();
-				break;
-			case 4:
-				division();
-				break;
-			case 5:
-				modulus();
-				break;
-			case 6:
-				power();
-				break;
-			case 7:
-				square();
-				break;
-			case 8:
-				square_root();
-				break;
-			case 9:
-				cube();
-				break;
-			case 10:
-				cube_root();
-				break;
-			case 11:
-				break;
-			case 12:
-				break;
-			case 13:
-				break;
+			case 1: addition(); break;
+			case 2: subtraction(); break;
+			case 3: multiplication(); break;
+			case 4: division(); break;
+			case 5: modulus(); break;
+			case 6: power(); break;
+			case 7: square(); break;
+			case 8: square_root(); break;
+			case 9: cube(); break;
+			case 10: cube_root(); break;
+			case 11: view_history(); break;
+			case 12: clear_history(); break;
+			case 13: save_history(); break;
 			case 0:
+				clear_history();
 				exit_program("Thank you for using Calculator.\n");
 				break;
 		}
@@ -179,23 +177,25 @@ void show_operations_menu() {
 void addition() {
 	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
+	const long double result = num1 + num2;
 
-	display_result(num1 + num2);
-	// add_to_history(num, result);
+	add_to_history(OP_ADD, num1, num2, true, result);
 }
 
 void subtraction() {
 	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
+	const long double result = num1 - num2;
 
-	display_result(num1 - num2);
+	add_to_history(OP_SUBTRACT, num1, num2, true, result);
 }
 
 void multiplication() {
 	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
+	const long double result = num1 * num2;
 
-	display_result(num1 * num2);
+	add_to_history(OP_MULTIPLY, num1, num2, true, result);
 }
 
 void division() {
@@ -207,7 +207,9 @@ void division() {
 		return;
 	}
 
-	display_result(num1 / num2);
+	const long double result = num1 / num2;
+
+	add_to_history(OP_DIVIDE, num1, num2, true, result);
 }
 
 void modulus() {
@@ -218,8 +220,9 @@ void modulus() {
 		draw_error("Cannot perform modulus by zero", FORMAT_WIDTH);
 		return;
 	}
+	const long double result = fmodl(num1, num2);
 
-	display_result(fmodl(num1, num2));
+	add_to_history(OP_MODULUS, num1, num2, true, result);
 }
 
 void power()  {
@@ -235,13 +238,14 @@ void power()  {
 		return;
 	}
 
-	display_result(result);
+	add_to_history(OP_POWER, base, exponent, true, result);
 }
 
 void square()  {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
+	const long double result = num * num;
 
-	display_result(num * num);
+	add_to_history(OP_SQUARE, num, 0, false, result);
 }
 
 void square_root() {
@@ -252,21 +256,24 @@ void square_root() {
 		return;
 	}
 
-	display_result(sqrtl(num));
+	const long double result = sqrtl(num);
+
+	add_to_history(OP_SQRT, num, 0, false, result);
 }
 
 void cube()  {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
+	const long double result = num * num * num;
 
-	display_result(num * num * num);
+	add_to_history(OP_CUBE, num, 0, false, result);
 }
 
 void cube_root() {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
+	const long double result = cbrtl(num);
 
-	display_result(cbrtl(num));
+	add_to_history(OP_CBRT, num, 0, false, result);
 }
-
 
 void display_result(long double result) {
 	if (!isfinite(result)) {
@@ -276,3 +283,57 @@ void display_result(long double result) {
 
 	printf("\nResult = %Lg\n", result);
 }
+
+void init_history() {
+	history_capacity = INITIAL_HISTORY_CAPACITY;
+	history_size = 0;
+
+	history = malloc(history_capacity * sizeof(HistoryEntry));
+
+	if (history == NULL) {
+		exit_program("Failed to allocate history");
+	}
+}
+
+void add_to_history(
+	Operation operation,
+	long double num1,
+	long double num2,
+	bool has_second_operand,
+	long double result
+) {
+	display_result(result);
+
+	if (history_size == history_capacity) {
+		size_t new_capacity = history_capacity * 2;
+
+		HistoryEntry *temp = realloc(history, new_capacity * sizeof(HistoryEntry));
+
+		if (temp == NULL) {
+			exit_program("Failed to allocate more space to history");
+		}
+		history = temp;
+		history_capacity = new_capacity;
+	}
+
+	history[history_size++] = (HistoryEntry){
+		.operation = operation,
+		.operand1 = num1,
+		.operand2 = num2,
+		.has_second_operand = has_second_operand,
+		.result = result,
+		.timestamp = time(NULL)
+	};
+}
+
+void view_history();
+
+void clear_history() {
+	free(history);
+
+	history = NULL;
+	history_capacity = 0;
+	history_size = 0;
+}
+
+void save_history();
