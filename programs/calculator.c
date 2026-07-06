@@ -26,7 +26,7 @@
 #include <math.h> // for cbrtl, fmodl, isfinite, powl, sqrtl
 #include <errno.h> // for EDOM, errno
 #include <stddef.h> // for size_t type
-#include <time.h> // NULL, time, time_t
+#include <time.h> // NULL, ctime, time, time_t
 
 #include "input.h" // for input functions
 #include "tui.h" // for TUI functions
@@ -76,7 +76,7 @@ void square();
 void square_root();
 void cube();
 void cube_root();
-void display_result(long double result);
+void display_result(const long double result);
 void init_history();
 void add_to_history(
 	Operation operation,
@@ -85,9 +85,10 @@ void add_to_history(
 	bool has_second_operand,
 	long double result
 );
+void destroy_history();
 void view_history();
 void clear_history();
-void save_history();
+void save_history_to_file();
 
 HistoryEntry *history = NULL;
 size_t history_capacity = 0;
@@ -109,7 +110,7 @@ const char MENU[MENU_ITEMS][MENU_ITEMS*2] = {
 	"Save History to file",
 };
 
-const char *OPERATIONS[] = {"+", "-", "*", "/", "%", "^", "^2", "^½", "^3", "^⅓"};
+const char *OPERATIONS[] = {"+", "-", "*", "/", "%", "^", "^ 2", "^ ½", "^ 3", "^ ⅓"};
 
 int main() {
 	clear_screen();
@@ -150,9 +151,9 @@ void perform_operations() {
 			case 10: cube_root(); break;
 			case 11: view_history(); break;
 			case 12: clear_history(); break;
-			case 13: save_history(); break;
+			case 13: save_history_to_file(); break;
 			case 0:
-				clear_history();
+				destroy_history();
 				exit_program("Thank you for using Calculator.\n");
 				break;
 		}
@@ -275,7 +276,7 @@ void cube_root() {
 	add_to_history(OP_CBRT, num, 0, false, result);
 }
 
-void display_result(long double result) {
+void display_result(const long double result) {
 	if (!isfinite(result)) {
 		draw_error("Calculation result is outside the supported range", FORMAT_WIDTH);
 		return;
@@ -326,14 +327,45 @@ void add_to_history(
 	};
 }
 
-void view_history();
-
-void clear_history() {
-	free(history);
-
-	history = NULL;
-	history_capacity = 0;
+void destroy_history() {
+	history_capacity = INITIAL_HISTORY_CAPACITY;
 	history_size = 0;
 }
 
-void save_history();
+void view_history() {
+	if (!history_size) {
+		printf("History is empty.\n");
+		return;
+	}
+	for (size_t i = 0; i < history_size; i++) {
+		if (history[i].has_second_operand) {
+			printf(
+				"%zu.\t%Lg %s %Lg = %Lg | %s",
+				i+1,
+				history[i].operand1,
+				OPERATIONS[history[i].operation],
+				history[i].operand2,
+				history[i].result,
+				ctime(&history[i].timestamp)
+			);
+		} else {
+			printf(
+				"%zu.\t%Lg %s = %Lg | %s",
+				i+1,
+				history[i].operand1,
+				OPERATIONS[history[i].operation],
+				history[i].result,
+				ctime(&history[i].timestamp)
+			);
+		}
+	}
+}
+
+void clear_history() {
+	history_size = 0;
+	printf("History is cleared.\n");
+}
+
+void save_history_to_file() {
+
+}
