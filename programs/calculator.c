@@ -38,6 +38,7 @@
 
 #define MENU_ITEMS 13
 #define INITIAL_HISTORY_CAPACITY 4
+#define FILE_PATH "./bin/calculator_history.txt"
 
 typedef enum {
 	OP_ADD,
@@ -94,7 +95,7 @@ HistoryEntry *history = NULL;
 size_t history_capacity = 0;
 size_t history_size = 0;
 
-const char MENU[MENU_ITEMS][MENU_ITEMS*2] = {
+const char *MENU[] = {
 	"Addition",
 	"Subtraction",
 	"Multiplication",
@@ -340,7 +341,7 @@ void view_history() {
 	for (size_t i = 0; i < history_size; i++) {
 		if (history[i].has_second_operand) {
 			printf(
-				"%zu.\t%Lg %s %Lg = %Lg | %s",
+				"%zu │ %Lg %s %Lg = %Lg │ %s",
 				i+1,
 				history[i].operand1,
 				OPERATIONS[history[i].operation],
@@ -350,7 +351,7 @@ void view_history() {
 			);
 		} else {
 			printf(
-				"%zu.\t%Lg %s = %Lg | %s",
+				"%zu │ %Lg %s = %Lg │ %s",
 				i+1,
 				history[i].operand1,
 				OPERATIONS[history[i].operation],
@@ -367,5 +368,44 @@ void clear_history() {
 }
 
 void save_history_to_file() {
+	if (!history_size) {
+		printf("History is empty.\n");
+		return;
+	}
 
+	FILE *history_file = fopen(FILE_PATH, "w");
+
+	if (history_file == NULL) {
+		draw_error("File cannot be created", FORMAT_WIDTH);
+		return;
+	}
+
+	for (size_t i = 0; i < history_size; i++) {
+		if (history[i].has_second_operand) {
+			fprintf(
+				history_file,
+				"%zu │ %Lg %s %Lg = %Lg │ %s",
+				i+1,
+				history[i].operand1,
+				OPERATIONS[history[i].operation],
+				history[i].operand2,
+				history[i].result,
+				ctime(&history[i].timestamp)
+			);
+		} else {
+			fprintf(
+				history_file,
+				"%zu │ %Lg %s = %Lg │ %s",
+				i+1,
+				history[i].operand1,
+				OPERATIONS[history[i].operation],
+				history[i].result,
+				ctime(&history[i].timestamp)
+			);
+		}
+	}
+
+	printf("File is written successfully in %s.\n", FILE_PATH);
+
+	fclose(history_file);
 }
