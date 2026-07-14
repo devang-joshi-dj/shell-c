@@ -26,7 +26,7 @@
 #include <math.h> // for cbrtl, fmodl, isfinite, powl, sqrtl
 #include <errno.h> // for EDOM, errno
 #include <stddef.h> // for size_t type
-#include <time.h> // NULL, ctime, time, time_t
+#include <time.h> // NULL, ctime, difftime, time, time_t
 
 #include "input.h" // for input functions
 #include "tui.h" // for TUI functions
@@ -94,6 +94,8 @@ void save_history_to_file();
 HistoryEntry *history = NULL;
 size_t history_capacity = 0;
 size_t history_size = 0;
+size_t calculations_done = 0;
+time_t calc_start_time;
 
 const char *MENU[] = {
 	"Addition",
@@ -114,6 +116,7 @@ const char *MENU[] = {
 const char *OPERATIONS[] = {"+", "-", "*", "/", "%", "^", "^ 2", "^ ½", "^ 3", "^ ⅓"};
 
 int main() {
+	calc_start_time = time(NULL);
 	clear_screen();
 
 	show_welcome_message();
@@ -155,6 +158,8 @@ void perform_operations() {
 			case 13: save_history_to_file(); break;
 			case 0:
 				destroy_history();
+				printf("Active Session Time    : %.0f seconds \n", difftime(time(NULL), calc_start_time));
+				printf("Total Calculations Done: %zu\n", calculations_done);
 				exit_program("Thank you for using Calculator.\n");
 				break;
 		}
@@ -305,6 +310,7 @@ void add_to_history(
 	long double result
 ) {
 	display_result(result);
+	calculations_done++;
 
 	if (history_size == history_capacity) {
 		size_t new_capacity = history_capacity * 2;

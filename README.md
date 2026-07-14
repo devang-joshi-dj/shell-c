@@ -91,7 +91,7 @@ Interactive program for visualizing and manipulating the binary representation o
 - Terminal UI development
 - Binary analysis and comparisons
 
-### Calculator (WIP)
+### Calculator
 Interactive calculator to perform mathematical operations through a menu-driven interface.
 
 #### Features
