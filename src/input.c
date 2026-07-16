@@ -376,6 +376,9 @@ unsigned int accept_menu_option(const char *prompt, const size_t max_options, co
 		}
 	} while (!is_value_allowed);
 
+	draw_single_line_separator(FORMAT_WIDTH);
+	printf("\n");
+
 	return value;
 }
 

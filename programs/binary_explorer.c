@@ -48,7 +48,6 @@ typedef struct {
 } NumberSnapshot;
 
 void run_binary_explorer();
-void show_operations_menu();
 void perform_operations(const unsigned long num);
 
 void display_current_num_binary(const NumberSnapshot *original);
@@ -61,7 +60,7 @@ void compare_with_2nd_number(const NumberSnapshot *original);
 void display_binary_operation(const char *operation, const char *top, const char *bottom, const char *result);
 void set_prepend_bits(int difference, char *buffer);
 
-const char MENU[MENU_ITEMS][MENU_ITEMS*4] = {
+const char *MENU[] = {
 	"Show Number Information",
 	"Set a Bit",
 	"Clear a Bit",
@@ -87,20 +86,6 @@ void run_binary_explorer() {
 }
 
 /**
- * Function to show operations menu to user and accept input, validate it, return it
- */
-void show_operations_menu() {
-	draw_double_line_separator(FORMAT_WIDTH);
-
-	printf("\n");
-	for (int i = 0; i < MENU_ITEMS; i++) {
-		printf("%d. %s\n", i+1, MENU[i]);
-	}
-	printf("0. Exit\n\n");
-
-}
-
-/**
  * Function to keep accepting input for performing operation on given number until user exits
  */
 void perform_operations(const unsigned long num) {
@@ -116,12 +101,8 @@ void perform_operations(const unsigned long num) {
 	show_basic_num_info(&original);
 
 	while (accepting_operation) {
-		show_operations_menu();
-		// const int selected_option = accept_menu_option("Please choose from the menu above to select an operation", MENU_ITEMS, FORMAT_WIDTH);
+		show_operations_menu(MENU, MENU_ITEMS, FORMAT_WIDTH);
 		const int selected_option = accept_menu_option("Choice", MENU_ITEMS, FORMAT_WIDTH);
-
-		draw_single_line_separator(FORMAT_WIDTH);
-		printf("\n");
 
 		switch (selected_option) {
 			case 1:

@@ -3,6 +3,7 @@
  *
  * Terminal user interface helpers and formatting.
  */
+#include <stddef.h>
 #include <stdio.h> // for size_t, printf, snprintf functions
 #include <string.h> // for strlen function
 
@@ -21,6 +22,20 @@ static void draw_bottom_title_line(const int width);
 static void draw_bottom_header_line(const int width);
 static void draw_top_line(const int width);
 static void draw_bottom_line(const int width);
+
+
+/**
+ * Function to show operations menu to user and accept input, validate it, return it
+ */
+void show_operations_menu(const char *MENU[], const int MENU_ITEMS, const int FORMAT_WIDTH) {
+	draw_double_line_separator(FORMAT_WIDTH);
+
+	printf("\n");
+	for (int i = 0; i < MENU_ITEMS; i++) {
+		printf("%d. %s\n", i+1, MENU[i]);
+	}
+	printf("0. Exit\n\n");
+}
 
 /**
  * Function to draw single line separator for the given width

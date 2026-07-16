@@ -4,6 +4,7 @@
 #include <stddef.h> // for size_t type
 #include <stdbool.h> // for bool type
 
+void show_operations_menu(const char *MENU[], const int MENU_ITEMS, const int FORMAT_WIDTH);
 void draw_single_line_separator(const int width);
 void draw_double_line_separator(const int width);
 void draw_title(const char *title, const int width);
