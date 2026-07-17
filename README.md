@@ -106,7 +106,6 @@ Interactive calculator to perform mathematical operations through a menu-driven 
 - Session statistics
 - Save calculation history to a file
 - Continuous calculation mode
-- Mathematical expression evaluation
 
 ---
 
