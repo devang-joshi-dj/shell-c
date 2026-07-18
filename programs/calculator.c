@@ -23,7 +23,7 @@
 #define FORMAT_WIDTH 64
 
 #define MENU_ITEMS 14
-#define CONTINOUS_MENU_ITEMS 10
+#define CONTINUOUS_MENU_ITEMS 10
 #define INITIAL_HISTORY_CAPACITY 4
 #define FILE_PATH "./bin/calculator_history.txt"
 
@@ -52,7 +52,6 @@ typedef struct {
 	time_t timestamp;
 } HistoryEntry;
 
-void show_welcome_message();
 void perform_operations();
 void addition();
 void subtraction();
@@ -66,19 +65,18 @@ void cube();
 void cube_root();
 
 void continuous_calculation();
-long double continous_addition(long double num);
-long double continous_subtraction(long double num);
-long double continous_multiplication(long double num);
-long double continous_division(long double num);
-long double continous_modulus(long double num);
-long double continous_power(long double num);
-long double continous_square(long double num);
-long double continous_square_root(long double num);
-long double continous_cube(long double num);
-long double continous_cube_root(long double num);
+long double continuous_addition(long double num);
+long double continuous_subtraction(long double num);
+long double continuous_multiplication(long double num);
+long double continuous_division(long double num);
+long double continuous_modulus(long double num);
+long double continuous_power(long double num);
+long double continuous_square(long double num);
+long double continuous_square_root(long double num);
+long double continuous_cube(long double num);
+long double continuous_cube_root(long double num);
 
 void display_result(const long double result);
-void init_history();
 void handle_post_operation(
 	Operation operation,
 	long double num1,
@@ -93,18 +91,19 @@ void add_to_history(
 	bool has_second_operand,
 	long double result
 );
+void init_history();
 void destroy_history();
 void view_history();
 void clear_history();
 void save_history_to_file();
 
-HistoryEntry *history = NULL;
-size_t history_capacity = 0;
-size_t history_size = 0;
-size_t calculations_done = 0;
-time_t calc_start_time;
+static HistoryEntry *history = NULL;
+static size_t history_capacity = 0;
+static size_t history_size = 0;
+static size_t calculations_done = 0;
+static time_t calc_start_time;
 
-const char *MENU[] = {
+static const char *const MENU[] = { // main menu
 	"Addition",
 	"Subtraction",
 	"Multiplication",
@@ -121,7 +120,7 @@ const char *MENU[] = {
 	"Save History to file",
 };
 
-const char *CONTINOUS_MENU[] = {
+static const char *const CONTINUOUS_MENU[] = { // continuous calculation mode menu
 	"Add",
 	"Subtract",
 	"Multiply",
@@ -134,26 +133,21 @@ const char *CONTINOUS_MENU[] = {
 	"Cube Root",
 };
 
-const char *OPERATIONS[] = {"+", "-", "*", "/", "%", "^", "^ 2", "^ ½", "^ 3", "^ ⅓"};
+static const char *const OPERATIONS[] = {"+", "-", "*", "/", "%", "^", "²", "√", "³", "∛"};
 
 int main() {
 	calc_start_time = time(NULL);
 	clear_screen();
 
-	show_welcome_message();
+	draw_title("CALCULATOR", FORMAT_WIDTH);
 	perform_operations();
 
 	return EXIT_SUCCESS;
 }
 
 /**
- * Function to show welcome message to user
+ * Function to keep accepting input for performing calculations until user exits
  */
-void show_welcome_message() {
-	draw_title("CALCULATOR", FORMAT_WIDTH);
-	printf("Welcome to Calculator. Thank You for opening it. It tells me that you already very smart person ;)");
-}
-
 void perform_operations() {
 	init_history();
 
@@ -259,7 +253,7 @@ void square()  {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
 	const long double result = num * num;
 
-	handle_post_operation(OP_SQUARE, num, 0, false, result);
+	handle_post_operation(OP_SQUARE, num, 0.0L, false, result);
 }
 
 void square_root() {
@@ -272,21 +266,21 @@ void square_root() {
 
 	const long double result = sqrtl(num);
 
-	handle_post_operation(OP_SQRT, num, 0, false, result);
+	handle_post_operation(OP_SQRT, num, 0.0L, false, result);
 }
 
 void cube()  {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
 	const long double result = num * num * num;
 
-	handle_post_operation(OP_CUBE, num, 0, false, result);
+	handle_post_operation(OP_CUBE, num, 0.0L, false, result);
 }
 
 void cube_root() {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
 	const long double result = cbrtl(num);
 
-	handle_post_operation(OP_CBRT, num, 0, false, result);
+	handle_post_operation(OP_CBRT, num, 0.0L, false, result);
 }
 
 void continuous_calculation() {
@@ -295,21 +289,21 @@ void continuous_calculation() {
 
 	bool is_continuous_calculation_active = true;
 	while (is_continuous_calculation_active) {
-		show_operations_menu(CONTINOUS_MENU, CONTINOUS_MENU_ITEMS, FORMAT_WIDTH);
+		show_operations_menu(CONTINUOUS_MENU, CONTINUOUS_MENU_ITEMS, FORMAT_WIDTH);
 		printf("Current Value = %Lg\n\n", calculating_num);
-		const int selected_option = accept_menu_option("Choice", CONTINOUS_MENU_ITEMS, FORMAT_WIDTH);
+		const int selected_option = accept_menu_option("Choice", CONTINUOUS_MENU_ITEMS, FORMAT_WIDTH);
 
 		switch (selected_option) {
-			case 1: calculating_num = continous_addition(calculating_num); break;
-			case 2: calculating_num = continous_subtraction(calculating_num); break;
-			case 3: calculating_num = continous_multiplication(calculating_num); break;
-			case 4: calculating_num = continous_division(calculating_num); break;
-			case 5: calculating_num = continous_modulus(calculating_num); break;
-			case 6: calculating_num = continous_power(calculating_num); break;
-			case 7: calculating_num = continous_square(calculating_num); break;
-			case 8: calculating_num = continous_square_root(calculating_num); break;
-			case 9: calculating_num = continous_cube(calculating_num); break;
-			case 10: calculating_num = continous_cube_root(calculating_num); break;
+			case 1: calculating_num = continuous_addition(calculating_num); break;
+			case 2: calculating_num = continuous_subtraction(calculating_num); break;
+			case 3: calculating_num = continuous_multiplication(calculating_num); break;
+			case 4: calculating_num = continuous_division(calculating_num); break;
+			case 5: calculating_num = continuous_modulus(calculating_num); break;
+			case 6: calculating_num = continuous_power(calculating_num); break;
+			case 7: calculating_num = continuous_square(calculating_num); break;
+			case 8: calculating_num = continuous_square_root(calculating_num); break;
+			case 9: calculating_num = continuous_cube(calculating_num); break;
+			case 10: calculating_num = continuous_cube_root(calculating_num); break;
 			case 0:
 				is_continuous_calculation_active = false;
 				printf("Exited continuous calculation mode\n");
@@ -323,22 +317,22 @@ void continuous_calculation() {
 }
 
 
-long double continous_addition(long double num) {
+long double continuous_addition(long double num) {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 	return num + num2;
 }
 
-long double continous_subtraction(long double num) {
+long double continuous_subtraction(long double num) {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 	return num - num2;
 }
 
-long double continous_multiplication(long double num) {
+long double continuous_multiplication(long double num) {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 	return num * num2;
 }
 
-long double continous_division(long double num) {
+long double continuous_division(long double num) {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 
 	if (num2 == 0.0L) {
@@ -349,34 +343,37 @@ long double continous_division(long double num) {
 	return num / num2;
 }
 
-long double continous_modulus(long double num) {
+long double continuous_modulus(long double num) {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 
 	if (num2 == 0.0L) {
 		draw_error("Cannot perform modulus by zero", FORMAT_WIDTH);
 		return num;
 	}
+
 	return fmodl(num, num2);
 }
 
-long double continous_power(long double num) {
+long double continuous_power(long double num) {
 	const long double exponent = accept_long_double("Enter exponent", FORMAT_WIDTH);
 
 	errno = 0;
 
-	return powl(num, exponent);
+	const long double result = powl(num, exponent);
 
 	if (errno == EDOM) {
 		draw_error("Invalid power operation", FORMAT_WIDTH);
 		return num;
 	}
+
+	return result;
 }
 
-long double continous_square(long double num) {
+long double continuous_square(long double num) {
 	return num * num;
 }
 
-long double continous_square_root(long double num) {
+long double continuous_square_root(long double num) {
 	if (num < 0.0L) {
 		draw_error("Cannot calculate the square root of a negative number", FORMAT_WIDTH);
 		return num;
@@ -385,11 +382,11 @@ long double continous_square_root(long double num) {
 	return sqrtl(num);
 }
 
-long double continous_cube(long double num) {
+long double continuous_cube(long double num) {
 	return num * num * num;
 }
 
-long double continous_cube_root(long double num) {
+long double continuous_cube_root(long double num) {
 	return cbrtl(num);
 }
 
@@ -397,26 +394,7 @@ long double continous_cube_root(long double num) {
  * Function to check and display the result
  */
 void display_result(const long double result) {
-	if (!isfinite(result)) {
-		draw_error("Calculation result is outside the supported range", FORMAT_WIDTH);
-		return;
-	}
-
 	printf("\nResult = %Lg\n", result);
-}
-
-/**
- * Function to initialise history
- */
-void init_history() {
-	history_capacity = INITIAL_HISTORY_CAPACITY;
-	history_size = 0;
-
-	history = malloc(history_capacity * sizeof(HistoryEntry));
-
-	if (history == NULL) {
-		exit_program("Failed to allocate history");
-	}
 }
 
 /**
@@ -429,6 +407,11 @@ void handle_post_operation(
 	bool has_second_operand,
 	long double result
 ) {
+	if (!isfinite(result)) {
+		draw_error("Calculation result is outside the supported range", FORMAT_WIDTH);
+		return;
+	}
+
 	calculations_done++;
 	if (operation != OP_CONTINUOUS_CALC) display_result(result);
 	add_to_history(operation, num1, num2, has_second_operand, result);
@@ -467,10 +450,26 @@ void add_to_history(
 }
 
 /**
+ * Function to initialise history
+ */
+void init_history() {
+	history_capacity = INITIAL_HISTORY_CAPACITY;
+	history_size = 0;
+
+	history = malloc(history_capacity * sizeof(HistoryEntry));
+
+	if (history == NULL) {
+		exit_program("Failed to allocate history");
+	}
+}
+
+/**
  * Function for destroying history
  */
 void destroy_history() {
-	history_capacity = INITIAL_HISTORY_CAPACITY;
+	free(history);
+	history = NULL;
+	history_capacity = 0;
 	history_size = 0;
 }
 
@@ -494,14 +493,24 @@ void view_history() {
 				ctime(&history[i].timestamp)
 			);
 		} else {
-			printf(
-				"%zu │ %Lg %s = %Lg │ %s",
-				i+1,
-				history[i].operand1,
-				history[i].operation == OP_CONTINUOUS_CALC ? "-> Continous Operation" : OPERATIONS[history[i].operation],
-				history[i].result,
-				ctime(&history[i].timestamp)
-			);
+			if (history[i].operation == OP_SQRT || history[i].operation == OP_CBRT)
+				printf(
+					"%zu │ %s%Lg = %Lg │ %s",
+					i+1,
+					OPERATIONS[history[i].operation],
+					history[i].operand1,
+					history[i].result,
+					ctime(&history[i].timestamp)
+				);
+			else
+				printf(
+					"%zu │ %Lg%s = %Lg │ %s",
+					i+1,
+					history[i].operand1,
+					history[i].operation == OP_CONTINUOUS_CALC ? "-> Continuous Operation" : OPERATIONS[history[i].operation],
+					history[i].result,
+					ctime(&history[i].timestamp)
+				);
 		}
 	}
 }
@@ -543,15 +552,26 @@ void save_history_to_file() {
 				ctime(&history[i].timestamp)
 			);
 		} else {
-			fprintf(
-				history_file,
-				"%zu │ %Lg %s = %Lg │ %s",
-				i+1,
-				history[i].operand1,
-				history[i].operation == OP_CONTINUOUS_CALC ? "-> Continous Operation" : OPERATIONS[history[i].operation],
-				history[i].result,
-				ctime(&history[i].timestamp)
-			);
+			if (history[i].operation == OP_SQRT || history[i].operation == OP_CBRT)
+				fprintf(
+					history_file,
+					"%zu │ %s%Lg = %Lg │ %s",
+					i+1,
+					OPERATIONS[history[i].operation],
+					history[i].operand1,
+					history[i].result,
+					ctime(&history[i].timestamp)
+				);
+			else
+				fprintf(
+					history_file,
+					"%zu │ %Lg%s = %Lg │ %s",
+					i+1,
+					history[i].operand1,
+					history[i].operation == OP_CONTINUOUS_CALC ? "-> Continuous Operation" : OPERATIONS[history[i].operation],
+					history[i].result,
+					ctime(&history[i].timestamp)
+				);
 		}
 	}
 

@@ -60,7 +60,7 @@ void compare_with_2nd_number(const NumberSnapshot *original);
 void display_binary_operation(const char *operation, const char *top, const char *bottom, const char *result);
 void set_prepend_bits(int difference, char *buffer);
 
-const char *MENU[] = {
+static const char *MENU[] = {
 	"Show Number Information",
 	"Set a Bit",
 	"Clear a Bit",
