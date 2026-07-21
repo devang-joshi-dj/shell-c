@@ -181,6 +181,9 @@ void perform_operations() {
 	}
 }
 
+/**
+ * Function to perform addition from the main menu
+ */
 void addition() {
 	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
@@ -189,6 +192,9 @@ void addition() {
 	handle_post_operation(OP_ADD, num1, num2, true, result);
 }
 
+/**
+ * Function to perform subtraction from the main menu
+ */
 void subtraction() {
 	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
@@ -197,6 +203,9 @@ void subtraction() {
 	handle_post_operation(OP_SUBTRACT, num1, num2, true, result);
 }
 
+/**
+ * Function to perform multiplication from the main menu
+ */
 void multiplication() {
 	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
@@ -205,6 +214,9 @@ void multiplication() {
 	handle_post_operation(OP_MULTIPLY, num1, num2, true, result);
 }
 
+/**
+ * Function to perform division from the main menu
+ */
 void division() {
 	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
@@ -219,6 +231,9 @@ void division() {
 	handle_post_operation(OP_DIVIDE, num1, num2, true, result);
 }
 
+/**
+ * Function to perform modulus from the main menu
+ */
 void modulus() {
 	const long double num1 = accept_long_double("Enter first number ", FORMAT_WIDTH);
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
@@ -232,6 +247,9 @@ void modulus() {
 	handle_post_operation(OP_MODULUS, num1, num2, true, result);
 }
 
+/**
+ * Function to perform value raised to power from the main menu
+ */
 void power()  {
 	const long double base = accept_long_double("Enter base    ", FORMAT_WIDTH);
 	const long double exponent = accept_long_double("Enter exponent", FORMAT_WIDTH);
@@ -248,6 +266,9 @@ void power()  {
 	handle_post_operation(OP_POWER, base, exponent, true, result);
 }
 
+/**
+ * Function to perform square from the main menu
+ */
 void square()  {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
 	const long double result = num * num;
@@ -255,6 +276,9 @@ void square()  {
 	handle_post_operation(OP_SQUARE, num, 0.0L, false, result);
 }
 
+/**
+ * Function to perform square root from the main menu
+ */
 void square_root() {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
 
@@ -268,6 +292,9 @@ void square_root() {
 	handle_post_operation(OP_SQUARE_ROOT, num, 0.0L, false, result);
 }
 
+/**
+ * Function to perform cube from the main menu
+ */
 void cube()  {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
 	const long double result = num * num * num;
@@ -275,6 +302,9 @@ void cube()  {
 	handle_post_operation(OP_CUBE, num, 0.0L, false, result);
 }
 
+/**
+ * Function to perform cube root from the main menu
+ */
 void cube_root() {
 	const long double num = accept_long_double("Enter number", FORMAT_WIDTH);
 	const long double result = cbrtl(num);
@@ -282,6 +312,9 @@ void cube_root() {
 	handle_post_operation(OP_CUBE_ROOT, num, 0.0L, false, result);
 }
 
+/**
+ * Function to perform continuous calculation mode
+ */
 void continuous_calculation() {
 	long double calculating_num = accept_long_double("Enter initial number", FORMAT_WIDTH);
 	const long double num = calculating_num;
@@ -315,22 +348,33 @@ void continuous_calculation() {
 	handle_post_operation(OP_CONTINUOUS_CALC, num, 0, false, calculating_num);
 }
 
-
+/**
+ * Function to perform addition from continuous calculation
+ */
 long double continuous_addition(long double num) {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 	return num + num2;
 }
 
+/**
+ * Function to perform subtraction from continuous calculation
+ */
 long double continuous_subtraction(long double num) {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 	return num - num2;
 }
 
+/**
+ * Function to perform multiplication from continuous calculation
+ */
 long double continuous_multiplication(long double num) {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 	return num * num2;
 }
 
+/**
+ * Function to perform division from continuous calculation
+ */
 long double continuous_division(long double num) {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 
@@ -342,6 +386,9 @@ long double continuous_division(long double num) {
 	return num / num2;
 }
 
+/**
+ * Function to perform modulus from continuous calculation
+ */
 long double continuous_modulus(long double num) {
 	const long double num2 = accept_long_double("Enter second number", FORMAT_WIDTH);
 
@@ -353,6 +400,9 @@ long double continuous_modulus(long double num) {
 	return fmodl(num, num2);
 }
 
+/**
+ * Function to perform value raised to power from continuous calculation
+ */
 long double continuous_power(long double num) {
 	const long double exponent = accept_long_double("Enter exponent", FORMAT_WIDTH);
 
@@ -368,10 +418,16 @@ long double continuous_power(long double num) {
 	return result;
 }
 
+/**
+ * Function to perform square from continuous calculation
+ */
 long double continuous_square(long double num) {
 	return num * num;
 }
 
+/**
+ * Function to perform square root from continuous calculation
+ */
 long double continuous_square_root(long double num) {
 	if (num < 0.0L) {
 		draw_error("Cannot calculate the square root of a negative number", FORMAT_WIDTH);
@@ -381,10 +437,16 @@ long double continuous_square_root(long double num) {
 	return sqrtl(num);
 }
 
+/**
+ * Function to perform cube from continuous calculation
+ */
 long double continuous_cube(long double num) {
 	return num * num * num;
 }
 
+/**
+ * Function to perform cube root from continuous calculation
+ */
 long double continuous_cube_root(long double num) {
 	return cbrtl(num);
 }
@@ -410,7 +472,7 @@ void handle_post_operation(
 }
 
 /**
- * Function for handling addition of operation done to the history
+ * Function to add calculation to the history
  */
 void add_to_history(
 	Operation operation,
