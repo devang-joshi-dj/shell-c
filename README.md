@@ -107,6 +107,22 @@ Interactive calculator to perform mathematical operations through a menu-driven 
 - Save calculation history to a file
 - Continuous calculation mode
 
+#### Concepts Practiced
+- Menu-driven application design
+- Function decomposition and code organization
+- Modular programming
+- Robust input validation
+- Error handling and edge-case management
+- Floating-point arithmetic using `long double`
+- Mathematical programming with `math.h`
+- Dynamic memory allocation (`malloc`, `realloc`, `free`)
+- Dynamic array implementation
+- Structures (`struct`) and enumerations (`enum`)
+- File input/output
+- Date and time handling
+- Program state management
+- Terminal-based user interface development
+
 ---
 
 ## Project Structure
@@ -139,6 +155,7 @@ Build a specific program:
 make prime_generator
 make number_analyzer
 make binary_explorer
+make calculator
 ```
 
 Run a program:
@@ -146,6 +163,7 @@ Run a program:
 make run-pg
 make run-na
 make run-be
+make run-calc
 ```
 
 Remove compiled executables:
